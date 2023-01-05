@@ -1,0 +1,26 @@
+{
+  "name": "jstris-plus",
+  "version": "2.5.1",
+  "description": "3rd party matchmaking, custom skins/sfx/gfx, and many more improvements to jstris!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "cross-env NODE_ENV=development HOST=dev webpack-dev-server --port 8080",
+    "dev-prod": "cross-env NODE_ENV=development HOST=prod webpack-dev-server --port 8080",
+    "dev-local": "cross-env NODE_ENV=development HOST=local webpack-dev-server --port 8080",
+    "pack": "webpack --mode production && node scripts/buildUserscript.js",
+    "build": "npm run pack",
+    "dev2": "webpack-dev-server --port 8080"
+  },
+  "dependencies": {
+    "webpack": "^5.73.0",
+    "zip-folder": "^1.0.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "raw-loader": "^4.0.2",
+    "tetris-fumen": "^1.1.3",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.11.0"
+  }
+}
