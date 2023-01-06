@@ -1,1 +1,0 @@
-{"manifest_version":2,"name":"Jstris+","version":"2.4.4","description":"3rd party matchmaking, custom skins/sfx/gfx, and many more improvements to jstris!","web_accessible_resources":["jstris-plus.js"],"content_scripts":[{"matches":["https://*.jstris.jezevec10.com/*"],"all_frames":true,"js":["content-script.js"]}]}
