@@ -1,7 +1,7 @@
 import { Config } from "./config";
 import { setPlusSfx } from "./util";
 
-const FETCH_URL = "https://raw.githubusercontent.com/freyhoe/Jstris-/main/presets/plusSoundPresets.json"
+const FETCH_URL = "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/presets/plusSoundPresets.json"
 
 export let CUSTOM_PLUS_SOUND_PRESETS = [];
 export const fetchPlusSoundPresets = () => {

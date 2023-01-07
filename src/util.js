@@ -162,14 +162,14 @@ export const notify = (title, body) => {
   if (notificationsSupported) {
     new Notification(title, {
       body: body,
-      icon: 'https://freyhoe.github.io/Jstris-/logo.png'
+      icon: 'https://jstrisplus.github.io/jstris-plus-assets/logo.png'
     })
   }
 }
 
 let plusSfx = { //fallback
-  READY: "https://freyhoe.github.io/Jstris-/sfx/ready.wav",
-  PB: "https://freyhoe.github.io/Jstris-/sfx/personalBest.wav"
+  READY: "https://jstrisplus.github.io/jstris-plus-assets/sfx/ready.wav",
+  PB: "https://jstrisplus.github.io/jstris-plus-assets/sfx/personalBest.wav"
 }
 export const setPlusSfx = (sfx) => {
   let d = document.getElementById('custom_plus_sfx_json_err')

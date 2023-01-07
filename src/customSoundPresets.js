@@ -1,20 +1,20 @@
 import { Config } from "./config";
 
-const FETCH_URL = "https://raw.githubusercontent.com/freyhoe/Jstris-/main/presets/soundPresets.json"
+const FETCH_URL = "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/presets/soundPresets.json"
 
 export let CUSTOM_SOUND_PRESETS = [];
 export const fetchSoundPresets = () => {
   fetch(FETCH_URL, { cache: "reload" })
-  .then(e => e.json())
-  .then(j => {
-    CUSTOM_SOUND_PRESETS = j;
-    for (let i of CUSTOM_SOUND_PRESETS) {
-      let option = document.createElement("option");
-      option.value = JSON.stringify(i);
-      option.innerHTML = i.name;
-      dropdown.appendChild(option);
-    }
-  })
+    .then(e => e.json())
+    .then(j => {
+      CUSTOM_SOUND_PRESETS = j;
+      for (let i of CUSTOM_SOUND_PRESETS) {
+        let option = document.createElement("option");
+        option.value = JSON.stringify(i);
+        option.innerHTML = i.name;
+        dropdown.appendChild(option);
+      }
+    })
 }
 
 export const CUSTOM_SOUND_PRESET_ELEMENT = document.createElement("div");

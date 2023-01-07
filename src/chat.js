@@ -21,7 +21,7 @@ export const initChat = () => {
   })
 
   const oldReadyGo = Game.prototype.readyGo;
-  Game.prototype.readyGo = function() {
+  Game.prototype.readyGo = function () {
     game = this;
     return oldReadyGo.apply(this, arguments);
   }
@@ -35,16 +35,16 @@ export const initChat = () => {
   document.addEventListener("keydown", e => {
     var charCode = (e.which) ? e.which : e.keyCode
     if (charCode == Config().TOGGLE_CHAT_KEYCODE) {
-        if (game && game.focusState !== 1) { // game already focused, unfocus
-          game.setFocusState(1);
-          setTimeout(function() {game.Live.chatInput.focus()}, 0) // setTimeout to prevent the key from being typed
+      if (game && game.focusState !== 1) { // game already focused, unfocus
+        game.setFocusState(1);
+        setTimeout(function () { game.Live.chatInput.focus() }, 0) // setTimeout to prevent the key from being typed
 
         // if keys are same, should close chat in this case
-        } else if (Config().CLOSE_CHAT_KEYCODE == Config().TOGGLE_CHAT_KEYCODE) { 
-          document.getElementsByClassName("layer mainLayer gfxLayer")[0].click();
-          document.getElementsByClassName("layer mainLayer gfxLayer")[0].focus();
+      } else if (Config().CLOSE_CHAT_KEYCODE == Config().TOGGLE_CHAT_KEYCODE) {
+        document.getElementsByClassName("layer mainLayer gfxLayer")[0].click();
+        document.getElementsByClassName("layer mainLayer gfxLayer")[0].focus();
 
-        }
+      }
     } else if (charCode == Config().CLOSE_CHAT_KEYCODE) { // focus game
       document.getElementsByClassName("layer mainLayer gfxLayer")[0].click();
       document.getElementsByClassName("layer mainLayer gfxLayer")[0].focus();
@@ -55,33 +55,33 @@ export const initChat = () => {
 
   let CUSTOM_EMOTES = [
     {
-      u: "https://raw.githubusercontent.com/freyhoe/Jstris-/main/emotes/Cheese.png",
+      u: "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/emotes/Cheese.png",
       t: "qep",
       g: "Jstris+",
       n: "MrCheese"
     }, {
-      u: "https://raw.githubusercontent.com/freyhoe/Jstris-/main/emotes/Cat.png",
+      u: "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/emotes/Cat.png",
       t: "jermy",
       g: "Jstris+",
       n: "CatUp"
     }, {
-      u: "https://raw.githubusercontent.com/freyhoe/Jstris-/main/emotes/Freg.png",
+      u: "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/emotes/Freg.png",
       t: "frog",
       g: "Jstris+",
       n: "FrogSad"
     }, {
-      u: "https://raw.githubusercontent.com/freyhoe/Jstris-/main/emotes/freycat.webp",
+      u: "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/emotes/freycat.webp",
       t: "frey",
       g: "Jstris+",
       n: "freycat"
     }, {
-      u: "https://raw.githubusercontent.com/freyhoe/Jstris-/main/emotes/Blahaj.png",
+      u: "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/emotes/Blahaj.png",
       t: "jermy",
       g: "Jstris+",
       n: "StarHaj"
     }
     , {
-      u: "https://raw.githubusercontent.com/freyhoe/Jstris-/main/emotes/ThisIsFine.png",
+      u: "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/emotes/ThisIsFine.png",
       t: "jermy",
       g: "Jstris+",
       n: "fine"
@@ -143,7 +143,7 @@ export const initChat = () => {
     }
   }
   EmoteSelect.prototype.initializeContainers = function () {
-    console.log(this.groupEmotes["Jstris+"] = "https://raw.githubusercontent.com/freyhoe/Jstris-/main/emotes/freycat.webp")
+    console.log(this.groupEmotes["Jstris+"] = "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/emotes/freycat.webp")
     this.searchElem = document.createElement("form"), this.searchElem.classList.add("form-inline", "emoteForm"), this.emoteElem.appendChild(this.searchElem), this.searchBar = document.createElement("input"), this.searchBar.setAttribute("autocomplete", "off"), this.searchBar.classList.add("form-control"), this.searchBar.id = "emoteSearch", this.searchBar.addEventListener("input", () => {
       this.searchFunction(this.emoteList);
     }), this.searchElem.addEventListener("submit", kesean => {

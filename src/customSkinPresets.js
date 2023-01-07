@@ -1,20 +1,20 @@
 import { Config } from "./config";
 
 
-const FETCH_URL = "https://raw.githubusercontent.com/freyhoe/Jstris-/main/presets/skinPresets.json";
+const FETCH_URL = "https://raw.githubusercontent.com/JstrisPlus/jstris-plus-assets/main/presets/skinPresets.json";
 export let CUSTOM_SKIN_PRESETS = [];
 export const fetchSkinPresets = () => {
   fetch(FETCH_URL, { cache: "reload" })
-  .then(e => e.json())
-  .then(j => {
-    CUSTOM_SKIN_PRESETS = j;
-    for (let i of CUSTOM_SKIN_PRESETS) {
-      let option = document.createElement("option");
-      option.value = JSON.stringify(i);
-      option.innerHTML = i.name;
-      dropdown.appendChild(option);
-    }
-  })
+    .then(e => e.json())
+    .then(j => {
+      CUSTOM_SKIN_PRESETS = j;
+      for (let i of CUSTOM_SKIN_PRESETS) {
+        let option = document.createElement("option");
+        option.value = JSON.stringify(i);
+        option.innerHTML = i.name;
+        dropdown.appendChild(option);
+      }
+    })
 }
 
 
@@ -27,7 +27,7 @@ dropdown.innerHTML += "<option>Select...</option>";
 
 dropdown.addEventListener("change", () => {
   var { url, ghostUrl } = JSON.parse(dropdown.value);
-  
+
   document.getElementById("CUSTOM_SKIN_URL").value = url || "";
   Config().set("CUSTOM_SKIN_URL", url || "");
   document.getElementById("CUSTOM_GHOST_SKIN_URL").value = ghostUrl || "";
