@@ -421,14 +421,17 @@ export const initMM = () => {
               let name = (list[i].children[0].dataset.name)
               if (name) {
                 let powerTipStat = list[i].parentNode
-                fetch(APIHOST + "stats/" + name).then((response) => response.json()).then(res => {
-                  let mmHeader = document.createElement("div")
-                  mmHeader.className = "t-titles"
-                  let span = document.createElement("span")
-                  span.textContent = "Matchmaking Stats"
-                  mmHeader.appendChild(span)
-                  powerTipStat.appendChild(mmHeader)
-                  powerTipStat.appendChild(createStatBlock(res))
+                fetch(APIHOST + "stats/" + name).then((response) => {
+                  if (response.status != 200) return
+                  response.json().then(res => {
+                    let mmHeader = document.createElement("div")
+                    mmHeader.className = "t-titles"
+                    let span = document.createElement("span")
+                    span.textContent = "Matchmaking Stats"
+                    mmHeader.appendChild(span)
+                    powerTipStat.appendChild(mmHeader)
+                    powerTipStat.appendChild(createStatBlock(res))
+                  })
                 })
               }
             }
@@ -496,17 +499,20 @@ export const initMM = () => {
     a.prepend(img)
     a.style.backgroundColor = "#e74c3c"
     cc1.children[0].appendChild(a)
-    fetch(APIHOST + "stats/" + mainName).then((response) => response.json()).then(res => {
+    fetch(APIHOST + "stats/" + mainName).then((response) => {
+      if (response.status != 200) return
+      response.json().then(res => {
 
-      let playerInfo = document.createElement("div");
-      playerInfo.className = "aboutPlayer";
-      let statHeader = document.createElement("span");
-      statHeader.className = "aboutTitle";
-      statHeader.textContent = "Matchmaking Stats";
-      playerInfo.appendChild(statHeader);
-      playerInfo.appendChild(createStatBlock(res));
-      cc.appendChild(playerInfo)
+        let playerInfo = document.createElement("div");
+        playerInfo.className = "aboutPlayer";
+        let statHeader = document.createElement("span");
+        statHeader.className = "aboutTitle";
+        statHeader.textContent = "Matchmaking Stats";
+        playerInfo.appendChild(statHeader);
+        playerInfo.appendChild(createStatBlock(res));
+        cc.appendChild(playerInfo)
 
+      })
     })
   } else if (urlParts[3] && urlParts[3] == "matches" && urlParts[4]) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -532,284 +538,294 @@ export const initMM = () => {
       else { matchView.style.display = "block" }
     }
     let name = decodeURI(urlParts[4]).split('?')[0]
-    fetch(APIHOST + "matches/" + name).then((response) => response.json()).then(res => {
+    fetch(APIHOST + "matches/" + name).then((response) => {
+      if (response.status != 200) {
 
-      let modal = document.createElement("div");
-      let modalContent = document.createElement("div");
-      let modalClose = document.createElement("span");
-      let modalTable = document.createElement("table");
-      modalClose.className = "mmClose";
-      modalClose.textContent = "×";
-      modalContent.appendChild(modalTable);
-      modalContent.appendChild(modalClose);
-      modal.className = "mmModal";
-      modalContent.className = "mmModal-content";
-      modal.append(modalContent);
-      modalClose.onclick = function () {
-        modal.style.display = "none";
-      };
+        response.text().then(res => {
+          loader.remove()
+          cc.textContent = res
+        })
+        return
+      }
+      response.json().then(res => {
 
-      modalTable.className = "table table-striped table-hover match-list";
+        let modal = document.createElement("div");
+        let modalContent = document.createElement("div");
+        let modalClose = document.createElement("span");
+        let modalTable = document.createElement("table");
+        modalClose.className = "mmClose";
+        modalClose.textContent = "×";
+        modalContent.appendChild(modalTable);
+        modalContent.appendChild(modalClose);
+        modal.className = "mmModal";
+        modalContent.className = "mmModal-content";
+        modal.append(modalContent);
+        modalClose.onclick = function () {
+          modal.style.display = "none";
+        };
 
-      document.body.appendChild(modal);
+        modalTable.className = "table table-striped table-hover match-list";
 
-      function loadGame(game, match) {
-        const ALL_STATS = ["apm", "pps", "cheese", "apd", "time"];
-        let table = modalContent.firstChild;
-        while (table.firstChild) {
-          table.removeChild(table.firstChild);
-        }
-        let aref = document.createElement("a");
-        let apic = document.createElement("img");
-        aref.style.position = "absolute";
-        aref.style.left = "5px";
-        aref.style.top = "5px";
-        apic.src = "https://jstris.jezevec10.com/res/play.png";
-        aref.appendChild(apic);
-        aref.href = `/games/${game.gid}`;
-        aref.target = "_blank";
-        table.appendChild(aref);
-        //   console.log(res)
-        if (game.stats || game.altStats) {
-          let thead = document.createElement("thead");
-          let theadtr = document.createElement("tr");
-          let spacer = document.createElement("th");
-          spacer.colSpan = 1;
-          theadtr.appendChild(spacer);
-          for (let ss of ALL_STATS) {
-            let stat = document.createElement("th");
-            stat.className = "apm";
-            stat.textContent = ss.toUpperCase();
-            theadtr.appendChild(stat);
+        document.body.appendChild(modal);
+
+        function loadGame(game, match) {
+          const ALL_STATS = ["apm", "pps", "cheese", "apd", "time"];
+          let table = modalContent.firstChild;
+          while (table.firstChild) {
+            table.removeChild(table.firstChild);
           }
-          let tdate = document.createElement("th");
-          thead.appendChild(theadtr);
-          table.appendChild(thead);
+          let aref = document.createElement("a");
+          let apic = document.createElement("img");
+          aref.style.position = "absolute";
+          aref.style.left = "5px";
+          aref.style.top = "5px";
+          apic.src = "https://jstris.jezevec10.com/res/play.png";
+          aref.appendChild(apic);
+          aref.href = `/games/${game.gid}`;
+          aref.target = "_blank";
+          table.appendChild(aref);
+          //   console.log(res)
+          if (game.stats || game.altStats) {
+            let thead = document.createElement("thead");
+            let theadtr = document.createElement("tr");
+            let spacer = document.createElement("th");
+            spacer.colSpan = 1;
+            theadtr.appendChild(spacer);
+            for (let ss of ALL_STATS) {
+              let stat = document.createElement("th");
+              stat.className = "apm";
+              stat.textContent = ss.toUpperCase();
+              theadtr.appendChild(stat);
+            }
+            let tdate = document.createElement("th");
+            thead.appendChild(theadtr);
+            table.appendChild(thead);
 
-          let body = document.createElement("tbody");
-          table.appendChild(body);
-          let winnerName = match.player;
-          let loserName = match.player;
-          if (!game.win) {
-            winnerName = match.opponent
-          } else {
-            loserName = match.opponent
-          }
-          let players = [];
-          if (game.stats) {
-            players.push({ name: winnerName, stats: game.stats });
-          }
-          if (game.altStats) {
-            players.push({ name: loserName, stats: game.altStats });
-          }
-          for (let match of players) {
-            let tr = document.createElement("tr");
-            let p1 = document.createElement("td");
-            p1.className = "pl1";
-            var ap1 = document.createElement("a");
-            ap1.textContent = match.name;
-            ap1.href = `/u/${match.name}`;
-            p1.appendChild(ap1);
-            tr.appendChild(p1);
-            if (match.stats) {
-              let sstats = {};
-              for (let ss of ALL_STATS) {
-                sstats[ss] = "-";
-              }
-              for (const [key, value] of Object.entries(match.stats)) {
-                if (isNaN(parseFloat(value)))
-                  continue;
-                if (parseFloat(value) < 0)
-                  continue;
-                if (sstats[key]) {
-                  sstats[key] = value;
+            let body = document.createElement("tbody");
+            table.appendChild(body);
+            let winnerName = match.player;
+            let loserName = match.player;
+            if (!game.win) {
+              winnerName = match.opponent
+            } else {
+              loserName = match.opponent
+            }
+            let players = [];
+            if (game.stats) {
+              players.push({ name: winnerName, stats: game.stats });
+            }
+            if (game.altStats) {
+              players.push({ name: loserName, stats: game.altStats });
+            }
+            for (let match of players) {
+              let tr = document.createElement("tr");
+              let p1 = document.createElement("td");
+              p1.className = "pl1";
+              var ap1 = document.createElement("a");
+              ap1.textContent = match.name;
+              ap1.href = `/u/${match.name}`;
+              p1.appendChild(ap1);
+              tr.appendChild(p1);
+              if (match.stats) {
+                let sstats = {};
+                for (let ss of ALL_STATS) {
+                  sstats[ss] = "-";
+                }
+                for (const [key, value] of Object.entries(match.stats)) {
+                  if (isNaN(parseFloat(value)))
+                    continue;
+                  if (parseFloat(value) < 0)
+                    continue;
+                  if (sstats[key]) {
+                    sstats[key] = value;
+                  }
+                }
+                for (let ss of ALL_STATS) {
+                  let stat = document.createElement("td");
+                  stat.className = "apm";
+                  stat.textContent = sstats[ss];
+                  tr.appendChild(stat);
+                }
+              } else {
+                for (let i = 0; i < ALL_STATS.length; i++) {
+                  let stat = document.createElement("td");
+                  stat.className = "apm";
+                  stat.textContent = "-";
+                  tr.appendChild(stat);
                 }
               }
-              for (let ss of ALL_STATS) {
-                let stat = document.createElement("td");
-                stat.className = "apm";
-                stat.textContent = sstats[ss];
-                tr.appendChild(stat);
-              }
-            } else {
-              for (let i = 0; i < ALL_STATS.length; i++) {
-                let stat = document.createElement("td");
-                stat.className = "apm";
-                stat.textContent = "-";
-                tr.appendChild(stat);
-              }
+
+              body.appendChild(tr);
             }
-
-            body.appendChild(tr);
           }
+
+          modal.style.display = "block";
         }
+        console.log(res)
+        const ALL_STATS = ["apm", "pps", "cheese", "apd", "time"];
+        //   console.log(res)
+        let table = document.createElement("table");
+        table.className = "table table-striped table-hover match-list";
+        let thead = document.createElement("thead");
+        let theadtr = document.createElement("tr");
+        let spacer = document.createElement("th");
+        spacer.colSpan = 3;
+        theadtr.appendChild(spacer);
+        for (let ss of ALL_STATS) {
+          let stat = document.createElement("th");
+          stat.className = "apm";
+          stat.textContent = ss.toUpperCase();
+          theadtr.appendChild(stat);
+        }
+        let tdate = document.createElement("th");
+        tdate.className = "date";
+        tdate.textContent = "Date";
+        let tgames = document.createElement("th");
+        tgames.className = "date";
+        tgames.textContent = "Games";
+        theadtr.appendChild(tdate);
+        theadtr.appendChild(tgames);
+        thead.appendChild(theadtr);
+        table.appendChild(thead);
 
-        modal.style.display = "block";
-      }
-      console.log(res)
-      const ALL_STATS = ["apm", "pps", "cheese", "apd", "time"];
-      //   console.log(res)
-      let table = document.createElement("table");
-      table.className = "table table-striped table-hover match-list";
-      let thead = document.createElement("thead");
-      let theadtr = document.createElement("tr");
-      let spacer = document.createElement("th");
-      spacer.colSpan = 3;
-      theadtr.appendChild(spacer);
-      for (let ss of ALL_STATS) {
-        let stat = document.createElement("th");
-        stat.className = "apm";
-        stat.textContent = ss.toUpperCase();
-        theadtr.appendChild(stat);
-      }
-      let tdate = document.createElement("th");
-      tdate.className = "date";
-      tdate.textContent = "Date";
-      let tgames = document.createElement("th");
-      tgames.className = "date";
-      tgames.textContent = "Games";
-      theadtr.appendChild(tdate);
-      theadtr.appendChild(tgames);
-      thead.appendChild(theadtr);
-      table.appendChild(thead);
-
-      let body = document.createElement("tbody");
-      table.appendChild(body);
-      for (let match of res) {
-        let tr = document.createElement("tr");
-        let p1 = document.createElement("td");
-        p1.className = "pl1";
-        var ap1 = document.createElement("a");
-        ap1.textContent = name;
-        ap1.href = `/u/${name}`;
-        p1.appendChild(ap1);
-        tr.appendChild(p1);
-        let sc = document.createElement("td");
-        sc.className = "sc";
-        let sM = document.createElement("span");
-        sM.style.color = "#04AA6D";
-        sM.className = "scoreMiddle";
-        let switched = match.opponent == name
-        if (match.forced) {
-          sM.textContent = "default";
-          if (switched) {
-            sM.textContent = "forfeit";
-            sM.style.color = "#A90441";
-          }
-        } else {
-          let wins = 0
-          let losses = 0
-          for (let game of match.games) {
+        let body = document.createElement("tbody");
+        table.appendChild(body);
+        for (let match of res) {
+          let tr = document.createElement("tr");
+          let p1 = document.createElement("td");
+          p1.className = "pl1";
+          var ap1 = document.createElement("a");
+          ap1.textContent = name;
+          ap1.href = `/u/${name}`;
+          p1.appendChild(ap1);
+          tr.appendChild(p1);
+          let sc = document.createElement("td");
+          sc.className = "sc";
+          let sM = document.createElement("span");
+          sM.style.color = "#04AA6D";
+          sM.className = "scoreMiddle";
+          let switched = match.opponent == name
+          if (match.forced) {
+            sM.textContent = "default";
             if (switched) {
-              if (game.win) losses += 1
-              else { wins += 1 }
-            } else {
-              if (!game.win) losses += 1
-              else { wins += 1 }
+              sM.textContent = "forfeit";
+              sM.style.color = "#A90441";
             }
-          }
-          sM.textContent = `${wins} - ${losses}`;
-          if (switched) {
-            sM.style.color = "#A90441";
-          }
-        }
-        sc.appendChild(sM);
-        tr.appendChild(sc);
-        let p2 = document.createElement("td");
-        p2.className = "pl2";
-        var ap2 = document.createElement("a");
-        ap2.textContent = switched ? match.player : match.opponent;
-        ap2.href = `/u/${switched ? match.player : match.opponent}`;
-        p2.appendChild(ap2);
-        tr.appendChild(p2);
-        if (switched ? match.opponentStats : match.stats) {
-          let sstats = {};
-          for (let ss of ALL_STATS) {
-            sstats[ss] = "-";
-          }
-          for (const [key, value] of Object.entries(switched ? match.opponentStats : match.stats)) {
-            if (isNaN(parseFloat(value)))
-              continue;
-            if (parseFloat(value) < 0)
-              continue;
-            if (sstats[key]) {
-              sstats[key] = value;
-            }
-          }
-          for (let ss of ALL_STATS) {
-            let stat = document.createElement("td");
-            stat.className = "apm";
-            stat.textContent = sstats[ss];
-            tr.appendChild(stat);
-          }
-        } else {
-          for (let i = 0; i < ALL_STATS.length; i++) {
-            let stat = document.createElement("td");
-            stat.className = "apm";
-            stat.textContent = "-";
-            tr.appendChild(stat);
-          }
-        }
-        let date = document.createElement("td");
-        date.className = "date";
-        date.textContent = new Date(match.date).toLocaleDateString();
-        tr.appendChild(date);
-        let btns = document.createElement("td");
-        if (match.games && match.games.length > 0) {
-          btns.style.display = "flex";
-          btns.style.justifyContent = "flex-end";
-          if (match.games) {
-            for (let m of match.games) {
-              let btn = document.createElement("button");
-              btn.className = "mm-button";
-              btns.appendChild(btn);
-              if (m.win == switched) {
-                btn.style.backgroundColor = "#A90441";
+          } else {
+            let wins = 0
+            let losses = 0
+            for (let game of match.games) {
+              if (switched) {
+                if (game.win) losses += 1
+                else { wins += 1 }
+              } else {
+                if (!game.win) losses += 1
+                else { wins += 1 }
               }
-              btn.onclick = function () {
-                loadGame(m, match);
-              };
+            }
+            sM.textContent = `${wins} - ${losses}`;
+            if (switched) {
+              sM.style.color = "#A90441";
             }
           }
-        } else {
-          btns.className = "apm";
+          sc.appendChild(sM);
+          tr.appendChild(sc);
+          let p2 = document.createElement("td");
+          p2.className = "pl2";
+          var ap2 = document.createElement("a");
+          ap2.textContent = switched ? match.player : match.opponent;
+          ap2.href = `/u/${switched ? match.player : match.opponent}`;
+          p2.appendChild(ap2);
+          tr.appendChild(p2);
+          if (switched ? match.opponentStats : match.stats) {
+            let sstats = {};
+            for (let ss of ALL_STATS) {
+              sstats[ss] = "-";
+            }
+            for (const [key, value] of Object.entries(switched ? match.opponentStats : match.stats)) {
+              if (isNaN(parseFloat(value)))
+                continue;
+              if (parseFloat(value) < 0)
+                continue;
+              if (sstats[key]) {
+                sstats[key] = value;
+              }
+            }
+            for (let ss of ALL_STATS) {
+              let stat = document.createElement("td");
+              stat.className = "apm";
+              stat.textContent = sstats[ss];
+              tr.appendChild(stat);
+            }
+          } else {
+            for (let i = 0; i < ALL_STATS.length; i++) {
+              let stat = document.createElement("td");
+              stat.className = "apm";
+              stat.textContent = "-";
+              tr.appendChild(stat);
+            }
+          }
+          let date = document.createElement("td");
+          date.className = "date";
+          date.textContent = new Date(match.date).toLocaleDateString();
+          tr.appendChild(date);
+          let btns = document.createElement("td");
+          if (match.games && match.games.length > 0) {
+            btns.style.display = "flex";
+            btns.style.justifyContent = "flex-end";
+            if (match.games) {
+              for (let m of match.games) {
+                let btn = document.createElement("button");
+                btn.className = "mm-button";
+                btns.appendChild(btn);
+                if (m.win == switched) {
+                  btn.style.backgroundColor = "#A90441";
+                }
+                btn.onclick = function () {
+                  loadGame(m, match);
+                };
+              }
+            }
+          } else {
+            btns.className = "apm";
+          }
+          tr.appendChild(btns);
+          body.appendChild(tr);
         }
-        tr.appendChild(btns);
-        body.appendChild(tr);
-      }
-      matchView.appendChild(table);
-      let opponentFilter = document.createElement("input")
-      opponentFilter.type = "text"
-      opponentFilter.name = "opponent"
-      opponentFilter.className = "form-control"
-      opponentFilter.placeholder = "Username"
-      opponentFilter.autocomplete = "off"
-      opponentFilter.style.padding = "10px"
-      opponentFilter.multiple = true
-      opponentFilter.onchange = (event) => {
-        let raw_names = opponentFilter.value.split(" ")
-        let names = []
-        for (let name of raw_names) {
-          names.push(name.toLowerCase())
-        }
-        for (let i = 0; i < body.children.length; i++) {
-          let child = body.children[i]
-          for (let j = 0; j < child.children.length; j++) {
-            let child2 = child.children[j]
-            if (child2.className == "pl2") {
-              if (child2.firstChild && names.includes(child2.firstChild.textContent.toLowerCase())) child.style.display = ""
-              else { child.style.display = "none" }
-              break
+        matchView.appendChild(table);
+        let opponentFilter = document.createElement("input")
+        opponentFilter.type = "text"
+        opponentFilter.name = "opponent"
+        opponentFilter.className = "form-control"
+        opponentFilter.placeholder = "Username"
+        opponentFilter.autocomplete = "off"
+        opponentFilter.style.padding = "10px"
+        opponentFilter.multiple = true
+        opponentFilter.onchange = (event) => {
+          let raw_names = opponentFilter.value.split(" ")
+          let names = []
+          for (let name of raw_names) {
+            names.push(name.toLowerCase())
+          }
+          for (let i = 0; i < body.children.length; i++) {
+            let child = body.children[i]
+            for (let j = 0; j < child.children.length; j++) {
+              let child2 = child.children[j]
+              if (child2.className == "pl2") {
+                if (child2.firstChild && names.includes(child2.firstChild.textContent.toLowerCase())) child.style.display = ""
+                else { child.style.display = "none" }
+                break
+              }
             }
           }
         }
-      }
-      matchView.prepend(opponentFilter)
-      cc.prepend(matchView)
-      loader.remove()
-      //              cc.prepend(collapsible)
+        matchView.prepend(opponentFilter)
+        cc.prepend(matchView)
+        loader.remove()
+        //              cc.prepend(collapsible)
 
 
+      })
     })
   }
 };
