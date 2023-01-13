@@ -222,7 +222,6 @@ const generateBody = () => {
 
   createTitle("Misc settings");
   createHTML(createKeyInputElement("UNDO_KEYCODE", "keybind to undo moves in practice mode"));
-  createCheckbox("ENABLE_EXTRA_KEYBINDS", "Enable multiple keybinds")
   createCheckbox("ENABLE_CHAT_TIMESTAMPS", "Enable chat timestamps");
   createCheckbox("SHOW_MM_BUTTON", "Show matchmaking button");
   createCheckbox("SHOW_QUEUE_INFO", "Show matchmaking queue info");
