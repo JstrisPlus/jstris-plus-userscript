@@ -20,7 +20,6 @@ import { initPracticeUndo } from "./practiceUndo";
 import { initPracticeSurvivalMode } from './practiceSurvivalMode';
 import { fixTeamsMode } from './teamsMode';
 import { initPracticeFumen, initReplayerSnapshot } from './practiceFumen';
-import { initExtraKeybinds } from "./extraKeybinds";
 import { authNotification, playSound, notify, setPlusSfx } from './util';
 import { initScreenshot } from './screenshot';
 // inject style
@@ -59,7 +58,6 @@ if (typeof Game == "function") {
     initLayout();
     initPracticeUndo();
     initPracticeFumen()
-    initExtraKeybinds();
     setPlusSfx(Config().CUSTOM_PLUS_SFX_JSON)
     let pbListener = GameCaption.prototype.newPB
     GameCaption.prototype.newPB = function () {

@@ -42,9 +42,6 @@ var config = {
   SCREENSHOT_KEYCODE: null,
 
   UNDO_KEYCODE: null,
-
-  ENABLE_EXTRA_KEYBINDS: false,
-  EXTRA_KEYBINDS: [[], [], [], [], [], [], [], []],
 };
 
 const defaultConfig = { ...config };
