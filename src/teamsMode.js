@@ -111,12 +111,17 @@ export const fixTeamsMode = () => {
             //janishia = this.slotWidth * letrina + (letrina - 1) * coline;
             // INJECTED LINE:
             janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline + queueHoldBoxWidthPlusPadding;
+            
+            // OLD LINE:
+            //var baseSlotXCoord = Math.floor((this.w - janishia) / 2);
+            // INJECTED LINE (TO PREVENT OVERLAP WITH BOARD)
+            var baseSlotXCoord = Math.max(0, Math.floor((this.w - janishia) / 2));
+            
             // end injected code
 
-            var adlemi = Math.floor((this.w - janishia) / 2);
-            curTeamLength > 0 && this.initTeamTag(teamIndex, adlemi, estarlin * teamIndex, janishia);
+            curTeamLength > 0 && this.initTeamTag(teamIndex, baseSlotXCoord, estarlin * teamIndex, janishia);
             for (var teamSlot = 0; teamSlot < curTeamLength; teamSlot++) {
-                var slotX = adlemi + teamSlot * (this.slotWidth + coline),
+                var slotX = baseSlotXCoord + teamSlot * (this.slotWidth + coline),
                     slotY = estarlin * teamIndex + cinnamin;
                 slotIndex >= this.slots.length ? this.slots[slotIndex] = new Slot(slotIndex, slotX, slotY, this) : (this.slots[slotIndex].x = slotX, this.slots[slotIndex].y = slotY, this.slots[slotIndex].init()), slotIndex++;
             }
