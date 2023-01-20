@@ -83,10 +83,10 @@ export const initFX = () => {
     if (window.SlotView && SlotView.prototype.isPrototypeOf(this.v)) {
 
       // do not do gfx if the board is too small
-      if (!shouldRenderEffectsOnView(this.v)) {
+      let life = this.v.slot.gs.p.Live
+      if (!shouldRenderEffectsOnView(this.v) && !life?.roomConfig?.mode == 2) {
         return val;
       }
-
       let foundGFXCanvases = this.v.slot.slotDiv.getElementsByClassName("gfxLayer");
 
       for (var e of foundGFXCanvases) {

@@ -29,67 +29,66 @@ export const fixTeamsMode = () => {
         this.transmitMode = temp
         return v
     }
-    Replayer.prototype.hardDrop = function () {
-        var _0x8a2dx2 = this.blockSets[this.activeBlock.set],
-            _0x8a2dx3 = this.activeBlock.pos.x + _0x8a2dx2.blocks[this.activeBlock.id].cc[this.activeBlock.rot],
-            _0x8a2dx4 = this.finesse - (0 === this.activeBlock.set ? finesse[this.activeBlock.id][this.activeBlock.rot][_0x8a2dx3] : 0);
-        _0x8a2dx4 > 0 && (this.totalFinesse += _0x8a2dx4, null === this.finFaults && (this.finFaults = []), this.finFaults.push(this.actions[this.ptr].hdId)), this.totalKeyPresses += this.finesse, this.finesse = 0, this.v.ghostEnabled && !this.v.redrawBlocked || this.updateGhostPiece(true);
-        var _0x8a2dx5 = this.ghostPiece.pos.y;
-        this.score(this.Scoring.A.HARD_DROP, _0x8a2dx5 - this.activeBlock.pos.y)
-        this.placeBlock(this.ghostPiece.pos.x, _0x8a2dx5)
-        this.spinPossible && _0x8a2dx5 !== this.activeBlock.pos.y && (this.spinPossible = false)
-        this.v.redraw()
-        _0x8a2dx4 && this.GameStats && this.GameStats.get('FINESSE').set(this.totalFinesse)
-        this.Analytics && this.Analytics.updatePos(this.actions[this.ptr].hdId)
-        this.playingLive && this.v.updateTextBar()
+    let oldFlash = SlotView.prototype.updateLiveMatrix
+    SlotView.prototype.updateLiveMatrix = function () {
+        let life = this.slot.gs.p.Live
+        if (life?.roomConfig?.mode == 2) return
+        return oldFlash.apply(this, arguments)
     }
-    /*  SlotView.prototype.updateTextBar = function () {
-          if (this.slot.gs.slotStats) {
-              var maziya = this.slot.gs.p.timestamp() - this.restartedAt
-              let katierra = Math.round(100 * this.g.placedBlocks / (maziya / 1e3)) / 100
-              let gladiola = Math.round(100 * this.g.gamedata.linesSent / (maziya / 6e4)) / 100;
-              console.log(this.g.gamedata)
-              console.log(maziya)
-              console.log(katierra, gladiola)
-              this.slot.stats.update(katierra, gladiola);
-          }
-      }*/
-    /*  Replayer.prototype.redrawHoldBox = function () {
-          if ((!this.ISGAME || !this.redrawBlocked) && (this.ISGAME || !this.v.redrawBlocked && this.v.QueueHoldEnabled) && (this.v.clearHoldCanvas(), null !== this.blockInHold)) {
-              console.log("HO")
-              for (var _0x8a2dx2 = this.blockSets[this.blockInHold.set].previewAs, _0x8a2dx3 = _0x8a2dx2.blocks[this.blockInHold.id].blocks[0], _0x8a2dx4 = _0x8a2dx2.blocks[this.blockInHold.id].color, _0x8a2dx5 = _0x8a2dx2.equidist ? [0, 3] : _0x8a2dx2.blocks[this.blockInHold.id].yp, _0x8a2dx9 = _0x8a2dx3.length, _0x8a2dx21 = _0x8a2dx2.blocks[this.blockInHold.id].xp ? _0x8a2dx2.blocks[this.blockInHold.id].xp : [0, _0x8a2dx9 - 1], _0x8a2dx22 = _0x8a2dx5[0]; _0x8a2dx22 <= _0x8a2dx5[1]; _0x8a2dx22++) {
-                  for (var _0x8a2dx23 = _0x8a2dx21[0]; _0x8a2dx23 <= _0x8a2dx21[1]; _0x8a2dx23++) {
-                      _0x8a2dx3[_0x8a2dx22][_0x8a2dx23] > 0 && (this.v.drawBlockOnCanvas(_0x8a2dx23 - _0x8a2dx21[0], _0x8a2dx22 - _0x8a2dx5[0], _0x8a2dx4, this.v.HOLD), this.blockInHold.item && _0x8a2dx3[_0x8a2dx22][_0x8a2dx23] === this.blockInHold.item && this.v.drawBrickOverlayOnCanvas(_0x8a2dx23 - _0x8a2dx21[0], _0x8a2dx22 - _0x8a2dx5[0], this.v.HOLD))
-                  }
-              }
-          }
-      }*/
-    /*    SlotView.prototype.drawBlockOnCanvas = function (melia, yucheng, arleta, nooh, dzire) {
-            (nooh === this.HOLD) && console.log("HO2")
-            dzire = dzire || this.holdQueueBlockSize;
-            var jazmaine = null;
-            if (jazmaine = nooh === this.MAIN ? this.ctx : nooh === this.HOLD ? this.hctx : this.qctx, 0 === this.skinId) {
-                var tymel = this.g.monochromeSkin && arleta <= 7 ? this.g.monochromeSkin : this.g.colors[arleta];
-                this.drawRectangle(jazmaine, melia * dzire, yucheng * dzire, dzire, dzire, tymel);
-            } else {
-                let leandros = this.skinWidth;
-                jazmaine.drawImage(this.tex, this.g.coffset[arleta] * leandros, 0, leandros, leandros, melia * dzire, yucheng * dzire, dzire, dzire);
-            }
-        }*/
-    /*   Slot.prototype.init = function () {
-           this.slotDiv.className = "slot", this.slotDiv.style.left = this.x + "px", this.slotDiv.style.top = this.y + "px", this.stageDiv.style.position = "relative", this.name.style.width = this.gs.matrixWidth + 2 + "px", this.name.style.height = this.gs.nameHeight + "px", this.name.style.fontSize = this.gs.nameFontSize + "px", this.pCan.width = this.bgCan.width = this.gs.matrixWidth, this.pCan.height = this.bgCan.height = this.gs.matrixHeight, this.queueCan.width = this.holdCan.width = 4 * this.gs.holdQueueBlockSize, this.holdCan.height = 4 * this.gs.holdQueueBlockSize, this.queueCan.height = 15 * this.gs.holdQueueBlockSize, this.pCan.style.top = this.bgCan.style.top = this.holdCan.style.top = this.queueCan.style.top = this.gs.nameHeight + "px", this.holdCan.style.left = "0px";
-           var widad = .8 * this.gs.holdQueueBlockSize, keior = 4 * this.gs.holdQueueBlockSize + widad;
-           if (this.name.style.left = keior + "px", this.pCan.style.left = this.bgCan.style.left = keior + "px", this.queueCan.style.left = keior + this.pCan.width + widad + "px", this.gs.slotStats && this.gs.matrixWidth >= 50) {
-               this.stats.init(), this.stats.statsDiv.style.left = keior + "px", this.slotDiv.appendChild(this.stats.statsDiv);
-               let leonilla = 1.1 * this.stats.statsDiv.childNodes[0].clientWidth, thorson = 2 * leonilla < .85 * this.gs.matrixWidth || leonilla > .6 * this.gs.matrixWidth;
-               this.stats.winCounter.style.display = thorson ? null : "none";
-           } else {
-               this.stats.disable();
-           }
-           ;
-           this.slotDiv.appendChild(this.name), this.slotDiv.appendChild(this.stageDiv), this.stageDiv.appendChild(this.bgCan), this.stageDiv.appendChild(this.pCan), this.stageDiv.appendChild(this.holdCan), this.stageDiv.appendChild(this.queueCan), this.slotDiv.style.display = "block", this.gs.gsDiv.appendChild(this.slotDiv), this.v.onResized();
-       }*/
+    let oldHold = Replayer.prototype.redrawHoldBox
+    Replayer.prototype.redrawHoldBox = function () {
+        this.v.QueueHoldEnabled = true;
+        this.v.holdCanvas.style.display = 'block';
+        return oldHold.apply(this, arguments)
+    }
+    let oldQueue = Replayer.prototype.updateQueueBox
+    Replayer.prototype.updateQueueBox = function () {
+        this.v.QueueHoldEnabled = true;
+        this.v.queueCanvas.style.display = 'block';
+        return oldQueue.apply(this, arguments)
+    }
+    let oldSlotInit = Slot.prototype.init
+    Slot.prototype.init = function () {
+        let life = this.gs.p.Live
+        if (life?.roomConfig?.mode != 2) {
+            return oldSlotInit.apply(this, arguments)
+        }
+
+        this.gs.holdQueueBlockSize = 10 //remove thise later
+        //    console.log("hi2", this.gs.holdQueueBlockSize)
+        this.gs.slotWidth = this.gs.matrixWidth * 1.7413
+        this.v.QueueHoldEnabled = true
+        this.slotDiv.className = "slot"
+        this.slotDiv.style.left = this.x + "px"
+        this.slotDiv.style.top = this.y + "px"
+        this.stageDiv.style.position = "relative"
+        this.name.style.width = this.gs.matrixWidth + 2 + "px"
+        this.name.style.height = this.gs.nameHeight + "px"
+        this.name.style.fontSize = this.gs.nameFontSize + "px"
+        this.pCan.width = this.bgCan.width = this.gs.matrixWidth
+        this.pCan.height = this.bgCan.height = this.gs.matrixHeight
+        this.queueCan.width = this.holdCan.width = 4 * this.gs.holdQueueBlockSize
+        this.holdCan.height = 4 * this.gs.holdQueueBlockSize
+        this.queueCan.height = 15 * this.gs.holdQueueBlockSize
+        this.pCan.style.top = this.bgCan.style.top = this.holdCan.style.top = this.queueCan.style.top = this.gs.nameHeight + "px", this.holdCan.style.left = "0px";
+        var widad = .8 * this.gs.holdQueueBlockSize
+        let keior = 4 * this.gs.holdQueueBlockSize + widad;
+        if (this.name.style.left = keior + "px", this.pCan.style.left = this.bgCan.style.left = keior + "px", this.queueCan.style.left = keior + this.pCan.width + widad + "px", this.gs.slotStats && this.gs.matrixWidth >= 50) {
+            this.stats.init(), this.stats.statsDiv.style.left = keior + "px", this.slotDiv.appendChild(this.stats.statsDiv);
+            let leonilla = 1.1 * this.stats.statsDiv.childNodes[0].clientWidth, thorson = 2 * leonilla < .85 * this.gs.matrixWidth || leonilla > .6 * this.gs.matrixWidth;
+            this.stats.winCounter.style.display = thorson ? null : "none";
+        } else {
+            this.stats.disable();
+        }
+        ;
+        this.slotDiv.appendChild(this.name), this.slotDiv.appendChild(this.stageDiv), this.stageDiv.appendChild(this.bgCan), this.stageDiv.appendChild(this.pCan), this.stageDiv.appendChild(this.holdCan), this.stageDiv.appendChild(this.queueCan), this.slotDiv.style.display = "block", this.gs.gsDiv.appendChild(this.slotDiv), this.v.onResized();
+    }
+    /*let oldGameSlotSetup = GameSlots.prototype.setup
     GameSlots.prototype.setup = function () {
+        let life = this.p.Live
+        if (life?.roomConfig?.mode != 2) {
+            return oldGameSlotSetup.apply(this, arguments)
+        }
         this.extendedAvailable = true
         this.rowCount = 2
         var besiana = 2
@@ -124,12 +123,14 @@ export const fixTeamsMode = () => {
         this.realHeight = this.slotHeight * this.rowCount + finnly * (this.rowCount - 1)
         this.liveBlockSize = this.matrixHeight / 20
         this.holdQueueBlockSize = this.liveBlockSize
-        console.log("hi", this.holdQueueBlockSize)
+        //   console.log("hi", this.holdQueueBlockSize)
         var kiondre = Math.floor((this.w - saanvika) / 2);
         if (true) {
             for (var evonte = 0, sonye = 0; sonye < this.rowCount; sonye++) {
                 for (let sujin = 0; sujin < besiana; sujin++) {
-                    var alexisjade = kiondre + sujin * (this.slotWidth + sharain), yvens = sonye * (this.slotHeight + finnly);
+                    var alexisjade = kiondre + sujin * (this.slotWidth + sharain)
+                    console.log(alexisjade)
+                    let yvens = sonye * (this.slotHeight + finnly);
                     evonte >= this.slots.length ? this.slots[evonte] = new Slot(evonte, alexisjade, yvens, this) : (this.slots[evonte].x = alexisjade, this.slots[evonte].y = yvens, this.slots[evonte].init()), evonte++;
                 }
             }
@@ -140,5 +141,97 @@ export const fixTeamsMode = () => {
             ;
             this.resizeElements();
         }
-    }
+    }*/
 }
+
+
+/*Replayer.prototype.hardDrop = function () {
+    var _0x8a2dx2 = this.blockSets[this.activeBlock.set],
+        _0x8a2dx3 = this.activeBlock.pos.x + _0x8a2dx2.blocks[this.activeBlock.id].cc[this.activeBlock.rot],
+        _0x8a2dx4 = this.finesse - (0 === this.activeBlock.set ? finesse[this.activeBlock.id][this.activeBlock.rot][_0x8a2dx3] : 0);
+    _0x8a2dx4 > 0 && (this.totalFinesse += _0x8a2dx4, null === this.finFaults && (this.finFaults = []), this.finFaults.push(this.actions[this.ptr].hdId)), this.totalKeyPresses += this.finesse, this.finesse = 0, this.v.ghostEnabled && !this.v.redrawBlocked || this.updateGhostPiece(true);
+    var _0x8a2dx5 = this.ghostPiece.pos.y;
+    this.score(this.Scoring.A.HARD_DROP, _0x8a2dx5 - this.activeBlock.pos.y)
+    this.placeBlock(this.ghostPiece.pos.x, _0x8a2dx5)
+    this.spinPossible && _0x8a2dx5 !== this.activeBlock.pos.y && (this.spinPossible = false)
+    this.v.redraw()
+    _0x8a2dx4 && this.GameStats && this.GameStats.get('FINESSE').set(this.totalFinesse)
+    this.Analytics && this.Analytics.updatePos(this.actions[this.ptr].hdId)
+    this.playingLive && this.v.updateTextBar()
+}*/
+/*  SlotView.prototype.updateTextBar = function () {
+      if (this.slot.gs.slotStats) {
+          var maziya = this.slot.gs.p.timestamp() - this.restartedAt
+          let katierra = Math.round(100 * this.g.placedBlocks / (maziya / 1e3)) / 100
+          let gladiola = Math.round(100 * this.g.gamedata.linesSent / (maziya / 6e4)) / 100;
+          console.log(this.g.gamedata)
+          console.log(maziya)
+          console.log(katierra, gladiola)
+          this.slot.stats.update(katierra, gladiola);
+      }
+  }*/
+/*
+    Replayer.prototype.updateQueueBox = function () {
+        this.v.QueueHoldEnabled = true
+        this.v.queueCanvas.style.display = "block"
+        if (this.ISGAME && this.redrawBlocked) {
+            return
+        };
+        if (!this.ISGAME && (this.v.redrawBlocked || !this.v.QueueHoldEnabled)) {
+            return
+        };
+        this.v.clearQueueCanvas();
+        let _0x8a2dx2 = 0;
+        for (var _0x8a2dx3 = 0; _0x8a2dx3 < this.R.showPreviews; _0x8a2dx3++) {
+            if (_0x8a2dx3 >= this.queue.length) {
+                if (9 != this.pmode) {
+                    break
+                };
+                if (!this.ModeManager.repeatQueue) {
+                    break
+                };
+                this.ModeManager.addStaticQueueToQueue()
+            };
+            for (var _0x8a2dx4 = this.queue[_0x8a2dx3], _0x8a2dx5 = this.blockSets[_0x8a2dx4.set].previewAs, _0x8a2dx9 = _0x8a2dx5.blocks[_0x8a2dx4.id].blocks[0], _0x8a2dx21 = _0x8a2dx5.blocks[_0x8a2dx4.id].color, _0x8a2dx22 = _0x8a2dx5.equidist ? [0, 3] : _0x8a2dx5.blocks[_0x8a2dx4.id].yp, _0x8a2dx23 = _0x8a2dx9.length, _0x8a2dx24 = _0x8a2dx5.blocks[_0x8a2dx4.id].xp ? _0x8a2dx5.blocks[_0x8a2dx4.id].xp : [0, _0x8a2dx23 - 1], _0x8a2dx25 = _0x8a2dx22[0]; _0x8a2dx25 <= _0x8a2dx22[1]; _0x8a2dx25++) {
+                for (var _0x8a2dx26 = _0x8a2dx24[0]; _0x8a2dx26 <= _0x8a2dx24[1]; _0x8a2dx26++) {
+                    _0x8a2dx9[_0x8a2dx25][_0x8a2dx26] > 0 && (this.v.drawBlockOnCanvas(_0x8a2dx26 - _0x8a2dx24[0], _0x8a2dx25 - _0x8a2dx22[0] + _0x8a2dx2, _0x8a2dx21, this.v.QUEUE), _0x8a2dx4.item && _0x8a2dx9[_0x8a2dx25][_0x8a2dx26] === _0x8a2dx4.item && this.v.drawBrickOverlayOnCanvas(_0x8a2dx26 - _0x8a2dx24[0], _0x8a2dx25 - _0x8a2dx22[0] + _0x8a2dx2, this.v.QUEUE))
+                }
+            };
+            _0x8a2dx5.equidist ? _0x8a2dx2 += 3 : _0x8a2dx2 += _0x8a2dx22[1] - _0x8a2dx22[0] + 2
+        }
+    }
+ 
+    Replayer.prototype.redrawHoldBox = function () {
+        //  console.log("HO-1")
+        //    console.log(this.ISGAME, this.redrawBlocked, this.v.redrawBlocked, this.v.QueueHoldEnabled,)
+        if ((!this.ISGAME || !this.redrawBlocked) && (this.ISGAME || !this.v.redrawBlocked && (this.v.QueueHoldEnabled || true)) && (this.v.clearHoldCanvas(), null !== this.blockInHold)) {
+            //     console.log("HO")
+            for (var _0x8a2dx2 = this.blockSets[this.blockInHold.set].previewAs, _0x8a2dx3 = _0x8a2dx2.blocks[this.blockInHold.id].blocks[0], _0x8a2dx4 = _0x8a2dx2.blocks[this.blockInHold.id].color, _0x8a2dx5 = _0x8a2dx2.equidist ? [0, 3] : _0x8a2dx2.blocks[this.blockInHold.id].yp, _0x8a2dx9 = _0x8a2dx3.length, _0x8a2dx21 = _0x8a2dx2.blocks[this.blockInHold.id].xp ? _0x8a2dx2.blocks[this.blockInHold.id].xp : [0, _0x8a2dx9 - 1], _0x8a2dx22 = _0x8a2dx5[0]; _0x8a2dx22 <= _0x8a2dx5[1]; _0x8a2dx22++) {
+                for (var _0x8a2dx23 = _0x8a2dx21[0]; _0x8a2dx23 <= _0x8a2dx21[1]; _0x8a2dx23++) {
+                    //      console.log(_0x8a2dx3[_0x8a2dx22][_0x8a2dx23])
+                    //        console.log("rep hold", this.v.HOLD)
+                    this.v.holdCanvas.style.display = "block"
+                    _0x8a2dx3[_0x8a2dx22][_0x8a2dx23] > 0 && (this.v.drawBlockOnCanvas(_0x8a2dx23 - _0x8a2dx21[0], _0x8a2dx22 - _0x8a2dx5[0], _0x8a2dx4, this.v.HOLD), this.blockInHold.item && _0x8a2dx3[_0x8a2dx22][_0x8a2dx23] === this.blockInHold.item && this.v.drawBrickOverlayOnCanvas(_0x8a2dx23 - _0x8a2dx21[0], _0x8a2dx22 - _0x8a2dx5[0], this.v.HOLD))
+                }
+            }
+        }
+    }*/
+/*    SlotView.prototype.drawBlockOnCanvas = function (melia, yucheng, arleta, nooh, dzire) {
+        //    console.log("view hold", this.HOLD)
+        //  console.log("HO3")
+        dzire = dzire || this.holdQueueBlockSize;
+        var jazmaine = null;
+        if (jazmaine = nooh === this.MAIN ? this.ctx : nooh === this.HOLD ? this.hctx : this.qctx, 0 === this.skinId) {
+            console.log("A")
+            var tymel = this.g.monochromeSkin && arleta <= 7 ? this.g.monochromeSkin : this.g.colors[arleta];
+            this.drawRectangle(jazmaine, melia * dzire, yucheng * dzire, dzire, dzire, tymel);
+        } else {
+            if ((nooh === this.HOLD)) {
+                console.log(this.skinWidth, dzire)
+                this.holdCanvas.style.display = "block"
+            }
+ 
+            let leandros = this.skinWidth;
+            jazmaine.drawImage(this.tex, this.g.coffset[arleta] * leandros, 0, leandros, leandros, melia * dzire, yucheng * dzire, dzire, dzire);
+        }
+    }*/
