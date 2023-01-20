@@ -56,7 +56,6 @@ export const fixTeamsMode = () => {
 
         this.gs.holdQueueBlockSize = 10 //remove thise later
         //    console.log("hi2", this.gs.holdQueueBlockSize)
-        this.gs.slotWidth = this.gs.matrixWidth * 1.7413
         this.v.QueueHoldEnabled = true
         this.slotDiv.className = "slot"
         this.slotDiv.style.left = this.x + "px"
@@ -82,6 +81,50 @@ export const fixTeamsMode = () => {
         }
         ;
         this.slotDiv.appendChild(this.name), this.slotDiv.appendChild(this.stageDiv), this.stageDiv.appendChild(this.bgCan), this.stageDiv.appendChild(this.pCan), this.stageDiv.appendChild(this.holdCan), this.stageDiv.appendChild(this.queueCan), this.slotDiv.style.display = "block", this.gs.gsDiv.appendChild(this.slotDiv), this.v.onResized();
+    }
+    GameSlots.prototype.tsetup = function(teamLengths) {
+        var maxTeamLength = Math.max.apply(null, teamLengths),
+            edweina = this.h / 2,
+            slotIndex = 0;
+        this.isExtended = false, this.nameFontSize = 15, this.nameHeight = 18;
+        var shonte = edweina,
+            coline = 1 === (curTeamLength = maxTeamLength) ? 0 : (2 === curTeamLength ? 30 : 60) / (curTeamLength - 1), 
+            cinnamin = this.tagHeight + 2;
+        this.slotHeight = this.nmob(shonte - this.nameHeight - 15), this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1, this.slotWidth = this.slotHeight / 2 + this.redBarWidth;
+
+        var janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline;
+        janishia > this.w && (this.slotWidth = Math.floor(this.w / curTeamLength) - coline, this.slotHeight = this.nmob(2 * (this.slotWidth - this.redBarWidth)), this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1, this.slotWidth = this.slotHeight / 2 + this.redBarWidth, janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline), this.liveBlockSize = this.slotHeight / 20;
+        var estarlin = this.slotHeight + this.nameHeight + 15 + cinnamin;
+        this.matrixHeight = this.slotHeight, this.matrixWidth = this.slotWidth;
+
+        // inject slot width here instead of in Slot.init because tsetup is called first.
+        this.slotWidth = this.matrixWidth * 1.7413
+
+        for (var teamIndex = 0; teamIndex < teamLengths.length; teamIndex++) {
+            var curTeamLength = teamLengths[teamIndex];
+            
+            // begin injected code
+            let queueHoldBoxPadding = .8 * this.holdQueueBlockSize
+            let queueHoldBoxWidthPlusPadding = 4 * this.holdQueueBlockSize + queueHoldBoxPadding;
+
+            // OLD LINE:
+            //janishia = this.slotWidth * letrina + (letrina - 1) * coline;
+            // INJECTED LINE:
+            janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline + queueHoldBoxWidthPlusPadding;
+            // end injected code
+
+            var adlemi = Math.floor((this.w - janishia) / 2);
+            curTeamLength > 0 && this.initTeamTag(teamIndex, adlemi, estarlin * teamIndex, janishia);
+            for (var teamSlot = 0; teamSlot < curTeamLength; teamSlot++) {
+                var slotX = adlemi + teamSlot * (this.slotWidth + coline),
+                    slotY = estarlin * teamIndex + cinnamin;
+                slotIndex >= this.slots.length ? this.slots[slotIndex] = new Slot(slotIndex, slotX, slotY, this) : (this.slots[slotIndex].x = slotX, this.slots[slotIndex].y = slotY, this.slots[slotIndex].init()), slotIndex++;
+            }
+        };
+        for (this.shownSlots = slotIndex; slotIndex < this.slots.length;) {
+            this.slots[slotIndex].hide(), slotIndex++;
+        };
+        this.realHeight = estarlin * teamLengths.length - 15, this.resizeElements();
     }
     /*let oldGameSlotSetup = GameSlots.prototype.setup
     GameSlots.prototype.setup = function () {
