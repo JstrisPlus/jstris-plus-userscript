@@ -5,21 +5,13 @@ export class SaveState {
      * Creates a SaveState out of the given Game (all attributes are deep copies)
      */
     constructor(game) {
-        // creates a deep copy. might be worth optimizing?
-
         this.matrix = clone(game.matrix);
         this.deadline = clone(game.deadline);
         this.activeBlock = clone(game.activeBlock);
         this.blockInHold = clone(game.blockInHold);
-        if (game.invalidFromSnapshot) {
-            this.queue = null
-
-        } else {
-            this.queue = clone(game.queue);
-        }
 
         this.b2b = game.b2b;
-        this.combo = game.combo;
+        this.combo = game.comboCounter;
 
         // save stat-related fields. might need to add a few more?
         this.placedBlocks = game.placedBlocks;
@@ -58,11 +50,11 @@ export const initPracticeUndo = () => {
             return;
         }
         if (this.fumenPages) {
-            this.fumenPages.pop()
+            this.fumenPages.pop();
         }
         this.Replay.invalidFromUndo = true;
         let lastState = this.saveStates.pop();
-        this.loadSaveState(lastState)
+        this.loadSaveState(lastState);
     }
     Game.prototype.loadSaveState = function (lastState) {
         this.matrix = lastState.matrix;
@@ -70,29 +62,14 @@ export const initPracticeUndo = () => {
         this.isBack2Back = lastState.b2b;
         this.comboCounter = lastState.combo;
 
-        if (!this.invalidFromSnapshot) {
-            this.blockRNG = alea(this.Replay.config.seed)
-            this.RNG = alea(this.Replay.config.seed)
-            this.initRandomizer(this.conf[0].rnd)
-            this.queue = []
-            this.generateQueue();
-            //  console.log(lastState.placedBlocks)
-            for (let i = 0; i <= lastState.placedBlocks; i++) {
-                this.activeBlock = this.getBlockFromQueue()
-            }
-            if (lastState.blockInHold != null) {
-                this.blockInHold = lastState.blockInHold
-                this.activeBlock = this.getBlockFromQueue()
-            } else {
-                this.blockInHold = null
-            }
-            //   console.log("foggy")
-        } else {
-            this.queue = lastState.queue
-        }
+        this.loadSeedAndPieces(
+            this.Replay.config.seed,
+            this.conf[0].rnd,
+            lastState.placedBlocks,
+            lastState.activeBlock,
+            lastState.blockInHold
+        );
 
-        this.activeBlock = lastState.activeBlock;
-        this.blockInHold = lastState.blockInHold;
 
         this.placedBlocks = lastState.placedBlocks;
         this.totalFinesse = lastState.totalFinesse;
@@ -101,6 +78,7 @@ export const initPracticeUndo = () => {
         this.incomingGarbage = lastState.incomingGarbage;
         this.redBar = lastState.redBar;
 
+        this.holdUsedAlready = false;
         this.setCurrentPieceToDefaultPos();
         this.updateGhostPiece(true);
         this.redrawAll();
@@ -119,6 +97,36 @@ export const initPracticeUndo = () => {
     }
 
     /**
+     * Sets the seed, queue, active block, and held block based on the parameters
+     * @param {int} seed
+     * @param {int} rngType
+     * @param {int} placedBlockCount
+     * @param {Block} activeBlock
+     * @param {Block} heldBlock
+     */
+    Game.prototype.loadSeedAndPieces = function(seed, rngType, placedBlockCount, activeBlock, heldBlock) {
+        // recreate rng's state at game start (from seed stored in replay)
+        this.Replay.config.seed = seed;
+        this.blockRNG = alea(seed);
+        this.RNG = alea(seed);
+        this.initRandomizer(rngType);
+
+        // to get the rng to the right state, roll for each previously generated block
+        // +1 for current piece and +1 for hold, because those are saved separately
+        let rollCount = placedBlockCount + 1;
+        if (heldBlock != null) rollCount += 1;
+        for (let i = 0; i < rollCount; i++) {
+            this.getRandomizerBlock(); // result is ignored but rng is adjusted
+        }
+
+        // generate queue from new rng, and set active and held block from save state
+        this.queue = [];
+        this.generateQueue();
+        this.activeBlock = activeBlock;
+        this.blockInHold = heldBlock;
+    }
+
+    /**
      * initializes the save state stack. To be run before a practice mode is a started
      */
     Game.prototype.initSaveStates = function () {
@@ -126,7 +134,7 @@ export const initPracticeUndo = () => {
         this.saveStates = [];
     }
 
-    // add `addSaveStat` to hard drop
+    // call `addSaveState` before each hard drop
     const oldBeforeHardDrop = Game.prototype.beforeHardDrop;
     Game.prototype.beforeHardDrop = function () {
         if (this.pmode === 2) this.addSaveState();
@@ -141,33 +149,32 @@ export const initPracticeUndo = () => {
         if (this.pmode === 2) {
             this.initSaveStates();
             if (!keyListenerInjected) {
-                document.addEventListener("keyup", (evtobj) => {
-                    if (0 == this.focusState) {
-                        if (evtobj.keyCode == Config().UNDO_KEYCODE) {
+                document.addEventListener("keydown", (keyEvent) => {
+                    if (this.focusState === 0) {
+                        if (keyEvent.keyCode === Config().UNDO_KEYCODE) {
                             this.undoToSaveState()
-                        };
+                        }
                     }
 
                 }, false)
             }
             keyListenerInjected = true
-
-
         }
 
 
         return oldGeneratePracticeQueue.apply(this, arguments);
     }
 
-    // neatly tell the user that replays don't work with undos
+    // neatly tell the user that replays don't work with undos or fumen/snapshot imports
     const oldUploadError = Replay.prototype.uploadError;
     Replay.prototype.uploadError = function (LivePtr, err) {
+        if (this.invalidFromSnapshot) {
+            LivePtr.showInChat("Jstris+", "Can't generate replay for game with fumen or snapshot import!");
+            return;
+        }
         if (this.invalidFromUndo) {
             LivePtr.showInChat("Jstris+", "Can't generate replay for game with undos!");
             return;
-        }
-        if (this.invalidFromSnapshot) {
-            LivePtr.showInChat("Jstris+", "Can't generate replay for game with fumen or snapshot import!");
         }
         return oldUploadError.apply(this, arguments);
     }
