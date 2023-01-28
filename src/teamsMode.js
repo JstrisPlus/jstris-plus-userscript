@@ -54,7 +54,7 @@ export const fixTeamsMode = () => {
             return oldSlotInit.apply(this, arguments)
         }
 
-        this.gs.holdQueueBlockSize = 10 //remove thise later
+        this.gs.holdQueueBlockSize = this.gs.matrixHeight / 20
         //    console.log("hi2", this.gs.holdQueueBlockSize)
         this.v.QueueHoldEnabled = true
         this.slotDiv.className = "slot"
