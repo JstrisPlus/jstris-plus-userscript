@@ -90,12 +90,22 @@ export const fixTeamsMode = () => {
         var shonte = edweina,
             coline = 1 === (curTeamLength = maxTeamLength) ? 0 : (2 === curTeamLength ? 30 : 60) / (curTeamLength - 1), 
             cinnamin = this.tagHeight + 2;
-        this.slotHeight = this.nmob(shonte - this.nameHeight - 15), this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1, this.slotWidth = this.slotHeight / 2 + this.redBarWidth;
+
+        this.slotHeight = this.nmob(shonte - this.nameHeight  - 15)
+
+        this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1
+        this.slotWidth = this.slotHeight / 2 + this.redBarWidth;
 
         var janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline;
         janishia > this.w && (this.slotWidth = Math.floor(this.w / curTeamLength) - coline, this.slotHeight = this.nmob(2 * (this.slotWidth - this.redBarWidth)), this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1, this.slotWidth = this.slotHeight / 2 + this.redBarWidth, janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline), this.liveBlockSize = this.slotHeight / 20;
+        
+        // OLD
         var estarlin = this.slotHeight + this.nameHeight + 15 + cinnamin;
-        this.matrixHeight = this.slotHeight, this.matrixWidth = this.slotWidth;
+        // INJECTED
+        //var estarlin = this.slotHeight + this.nameHeight * this.slotStats ? 3 : 1 + 15 + cinnamin;
+
+        this.matrixHeight = this.slotHeight
+        this.matrixWidth = this.slotWidth;
 
         // inject slot width here instead of in Slot.init because tsetup is called first.
         this.slotWidth = this.matrixWidth * 1.7413
@@ -116,7 +126,7 @@ export const fixTeamsMode = () => {
             //var baseSlotXCoord = Math.floor((this.w - janishia) / 2);
             // INJECTED LINE (TO PREVENT OVERLAP WITH BOARD)
             var baseSlotXCoord = Math.max(0, Math.floor((this.w - janishia) / 2));
-            
+
             // end injected code
 
             curTeamLength > 0 && this.initTeamTag(teamIndex, baseSlotXCoord, estarlin * teamIndex, janishia);
