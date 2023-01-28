@@ -100,9 +100,9 @@ export const fixTeamsMode = () => {
         janishia > this.w && (this.slotWidth = Math.floor(this.w / curTeamLength) - coline, this.slotHeight = this.nmob(2 * (this.slotWidth - this.redBarWidth)), this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1, this.slotWidth = this.slotHeight / 2 + this.redBarWidth, janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline), this.liveBlockSize = this.slotHeight / 20;
         
         // OLD
-        var estarlin = this.slotHeight + this.nameHeight + 15 + cinnamin;
+        //var estarlin = this.slotHeight + this.nameHeight + 15 + cinnamin;
         // INJECTED
-        //var estarlin = this.slotHeight + this.nameHeight * this.slotStats ? 3 : 1 + 15 + cinnamin;
+        var estarlin = this.slotHeight + this.nameHeight * (this.slotStats ? 3 : 1) + 15 + cinnamin;
 
         this.matrixHeight = this.slotHeight
         this.matrixWidth = this.slotWidth;
