@@ -53,28 +53,26 @@ const generateFumenMatrix = function () {
     return fieldStr
 }
 export const initPracticeFumen = () => {
-    const oldstartPractice = Game.prototype.restart;
+    const oldRestart = Game.prototype.restart;
     Game.prototype.restart = function () {
         const urlParams = new URLSearchParams(window.location.search);
         const snapshot = urlParams.get("snapshotPlus")
 
         if (this.pmode === 2 && snapshot != null) {
-            let val = oldstartPractice.apply(this, arguments)
+            let val = oldRestart.apply(this, arguments)
             let game = LZString.decompressFromEncodedURIComponent(snapshot)
             game = JSON.parse(game)
             console.log(game)
-            this.blockSeed = game.seed
-            this.blockRNG = alea(this.blockSeed)
-            this.RNG = alea(this.blockSeed)
-            this.initRandomizer(game.rnd)
-            this.generateQueue();
-            for (let i = 0; i <= game.placedBlocks; i++) {
-                this.activeBlock = this.getBlockFromQueue()
-            }
-            if (game.holdID != null) {
-                this.blockInHold = new Block(game.holdID)
-                this.activeBlock = this.getBlockFromQueue()
-            }
+
+            let heldBlock = game.holdID == null ? null : new Block(game.holdID);
+            this.loadSeedAndPieces(
+                game.seed,
+                game.rnd,
+                game.placedBlocks,
+                new Block(game.activeBlockID),
+                heldBlock
+            )
+
             this.matrix = clone(game.matrix)
             this.deadline = clone(game.deadline)
             this.setCurrentPieceToDefaultPos();
@@ -85,7 +83,7 @@ export const initPracticeFumen = () => {
         } else {
             this.fumenPages = null
             if (this.pmode === 2) this.fumenPages = []
-            return oldstartPractice.apply(this, arguments);
+            return oldRestart.apply(this, arguments);
 
         }
 
@@ -301,13 +299,14 @@ export const initReplayerSnapshot = () => {
         let deadline = clone(this.deadline)
         let placedBlocks = this.placedBlocks
         let seed = this.r.c.seed
+        let activeBlockID = this.activeBlock.id;
         let holdID = null
         if (this.blockInHold) {
             holdID = this.blockInHold.id
         }
         let rnd = this.R.rnd
         return LZString.compressToEncodedURIComponent(JSON.stringify({
-            matrix, deadline, placedBlocks, seed, holdID, rnd
+            matrix, deadline, placedBlocks, seed, activeBlockID, holdID, rnd
         }))
     }
 }
