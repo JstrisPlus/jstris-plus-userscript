@@ -1,6 +1,6 @@
 {
   "name": "jstris-plus",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "3rd party matchmaking, custom skins/sfx/gfx, and many more improvements to jstris!",
   "main": "index.js",
   "scripts": {
