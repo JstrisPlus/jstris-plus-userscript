@@ -73,7 +73,7 @@ if (typeof Game == "function") {
         return b4Reset.apply(this, arguments)
     }
     initScreenshot()
-    //fixTeamsMode()
+    fixTeamsMode()
 }
 if (typeof Live == "function") initChat();
 initReplayerSFX();
