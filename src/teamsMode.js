@@ -4,6 +4,10 @@ export const fixTeamsMode = () => {
         let temp = this.p.GS.extendedAvailable
         if (this.p.GS.teamData) {
             this.p.GS.extendedAvailable = true
+            var cid = this.rcS[arguments[0][1]];
+            if (cid in this.p.GS.cidSlots && this.clients[cid].rep) {
+                this.clients[cid].rep.v.cancelLiveMatrix = true
+            }
         }
         let v = oldDecode.apply(this, arguments)
         this.p.GS.extendedAvailable = temp
@@ -31,8 +35,13 @@ export const fixTeamsMode = () => {
     }
     let oldFlash = SlotView.prototype.updateLiveMatrix
     SlotView.prototype.updateLiveMatrix = function () {
-        let life = this.slot.gs.p.Live
-        if (life?.roomConfig?.mode == 2) return
+        if (this.cancelLiveMatrix) {
+            this.queueCanvas.style.display = "block"
+            this.holdCanvas.style.display = "block"
+            return
+        }
+        this.queueCanvas.style.display = "none"
+        this.holdCanvas.style.display = "none"
         return oldFlash.apply(this, arguments)
     }
     let oldHold = Replayer.prototype.redrawHoldBox
@@ -53,10 +62,12 @@ export const fixTeamsMode = () => {
         if (life?.roomConfig?.mode != 2) {
             return oldSlotInit.apply(this, arguments)
         }
-
+        this.v.queueCanvas.style.display = "none"
+        this.v.holdCanvas.style.display = "none"
         this.gs.holdQueueBlockSize = this.gs.matrixHeight / 20
         //    console.log("hi2", this.gs.holdQueueBlockSize)
         this.v.QueueHoldEnabled = true
+        this.v.cancelLiveMatrix = false
         this.slotDiv.className = "slot"
         this.slotDiv.style.left = this.x + "px"
         this.slotDiv.style.top = this.y + "px"
@@ -82,23 +93,23 @@ export const fixTeamsMode = () => {
         ;
         this.slotDiv.appendChild(this.name), this.slotDiv.appendChild(this.stageDiv), this.stageDiv.appendChild(this.bgCan), this.stageDiv.appendChild(this.pCan), this.stageDiv.appendChild(this.holdCan), this.stageDiv.appendChild(this.queueCan), this.slotDiv.style.display = "block", this.gs.gsDiv.appendChild(this.slotDiv), this.v.onResized();
     }
-    GameSlots.prototype.tsetup = function(teamLengths) {
+    GameSlots.prototype.tsetup = function (teamLengths) {
         var maxTeamLength = Math.max.apply(null, teamLengths),
             edweina = this.h / 2,
             slotIndex = 0;
         this.isExtended = false, this.nameFontSize = 15, this.nameHeight = 18;
         var shonte = edweina,
-            coline = 1 === (curTeamLength = maxTeamLength) ? 0 : (2 === curTeamLength ? 30 : 60) / (curTeamLength - 1), 
+            coline = 1 === (curTeamLength = maxTeamLength) ? 0 : (2 === curTeamLength ? 30 : 60) / (curTeamLength - 1),
             cinnamin = this.tagHeight + 2;
 
-        this.slotHeight = this.nmob(shonte - this.nameHeight  - 15)
+        this.slotHeight = this.nmob(shonte - this.nameHeight - 15)
 
         this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1
         this.slotWidth = this.slotHeight / 2 + this.redBarWidth;
 
         var janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline;
         janishia > this.w && (this.slotWidth = Math.floor(this.w / curTeamLength) - coline, this.slotHeight = this.nmob(2 * (this.slotWidth - this.redBarWidth)), this.redBarWidth = Math.ceil(this.slotHeight / 55) + 1, this.slotWidth = this.slotHeight / 2 + this.redBarWidth, janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline), this.liveBlockSize = this.slotHeight / 20;
-        
+
         // OLD
         //var estarlin = this.slotHeight + this.nameHeight + 15 + cinnamin;
         // INJECTED
@@ -112,7 +123,7 @@ export const fixTeamsMode = () => {
 
         for (var teamIndex = 0; teamIndex < teamLengths.length; teamIndex++) {
             var curTeamLength = teamLengths[teamIndex];
-            
+
             // begin injected code
             let queueHoldBoxPadding = .8 * this.holdQueueBlockSize
             let queueHoldBoxWidthPlusPadding = 4 * this.holdQueueBlockSize + queueHoldBoxPadding;
@@ -121,7 +132,7 @@ export const fixTeamsMode = () => {
             //janishia = this.slotWidth * letrina + (letrina - 1) * coline;
             // INJECTED LINE:
             janishia = this.slotWidth * curTeamLength + (curTeamLength - 1) * coline + queueHoldBoxWidthPlusPadding;
-            
+
             // OLD LINE:
             //var baseSlotXCoord = Math.floor((this.w - janishia) / 2);
             // INJECTED LINE (TO PREVENT OVERLAP WITH BOARD)
