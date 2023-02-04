@@ -92,6 +92,8 @@ export const fixTeamsMode = () => {
         }
         ;
         this.slotDiv.appendChild(this.name), this.slotDiv.appendChild(this.stageDiv), this.stageDiv.appendChild(this.bgCan), this.stageDiv.appendChild(this.pCan), this.stageDiv.appendChild(this.holdCan), this.stageDiv.appendChild(this.queueCan), this.slotDiv.style.display = "block", this.gs.gsDiv.appendChild(this.slotDiv), this.v.onResized();
+
+        this.stats.statsDiv.style.width = "250px"
     }
     GameSlots.prototype.tsetup = function (teamLengths) {
         var maxTeamLength = Math.max.apply(null, teamLengths),
