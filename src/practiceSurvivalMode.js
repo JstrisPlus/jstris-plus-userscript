@@ -88,9 +88,15 @@ export const initPracticeSurvivalMode = () => {
 
       if (!hasInit) {
         let oldOnGameEnd = Settings.prototype.onGameEnd;
-        this.R.mess = INIT_MESS;
+        if (this.pmode == 2) {
+          this.R.mess = INIT_MESS;
+        }
         window.game = this;
-        setMess = m => { this.R.mess = m; }
+        setMess = m => {
+          if (this.pmode == 2) {
+            this.R.mess = m;
+          }
+        }
         this.Settings.onGameEnd = function() {
           if (this.p.pmode == 2) {
             stopCycle();
