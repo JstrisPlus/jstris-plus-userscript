@@ -22,6 +22,7 @@ import { fixTeamsMode } from './teamsMode';
 import { initPracticeFumen, initReplayerSnapshot } from './practiceFumen';
 import { authNotification, playSound, notify, setPlusSfx } from './util';
 import { initScreenshot } from './screenshot';
+import { initAutomaticReplayCodes } from './automatic_replay_codes.js';
 // inject style
 var styleSheet = document.createElement("style");
 styleSheet.innerText = css;
@@ -57,23 +58,24 @@ if (typeof GameCore == "function") {
 if (typeof Game == "function") {
     initLayout();
     initPracticeUndo();
-    initPracticeFumen()
-    setPlusSfx(Config().CUSTOM_PLUS_SFX_JSON)
-    let pbListener = GameCaption.prototype.newPB
+    initPracticeFumen();
+    setPlusSfx(Config().CUSTOM_PLUS_SFX_JSON);
+    let pbListener = GameCaption.prototype.newPB;
     GameCaption.prototype.newPB = function () {
         playSound("PB");
-        let val = pbListener.apply(this, arguments)
-        return val
+        let val = pbListener.apply(this, arguments);
+        return val;
     }
     let b4Reset = Live.prototype.beforeReset
     Live.prototype.beforeReset = function () {
         if (!this.p.isTabFocused) {
-            notify("Jstris", "⚠ New game starting! ⚠")
+            notify("Jstris", "⚠ New game starting! ⚠");
         }
-        return b4Reset.apply(this, arguments)
+        return b4Reset.apply(this, arguments);
     }
-    initScreenshot()
-    fixTeamsMode()
+    initScreenshot();
+    fixTeamsMode();
+    initAutomaticReplayCodes();
 }
 if (typeof Live == "function") initChat();
 initReplayerSFX();
