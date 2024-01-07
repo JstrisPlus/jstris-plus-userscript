@@ -12,10 +12,9 @@ export const initAutomaticReplayCodes = () => {
 
     }
 
-    const oldReadyGo = Game.prototype.readyGo;
+    const oldStartPractice = Game.prototype.startPractice;
     
-    Game.prototype.readyGo = function() {
-      let val = oldReadyGo.apply(this, arguments)
+    Game.prototype.startPractice = function() {
       
       //how many pieces should the replay at least have
       let piecesPlacedCutoff = 1
@@ -34,6 +33,8 @@ export const initAutomaticReplayCodes = () => {
           this["Live"]['chatMajorWarning'](replayHTML);
           this["replayCounter"]++;
       }
+
+      let val = oldStartPractice.apply(this, arguments);
 
       return val;
     }
