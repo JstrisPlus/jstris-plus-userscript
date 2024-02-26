@@ -160,6 +160,7 @@ export const initActionText = () => {
                 return parseInt(number[0]);
             }
 
+
             let IS_BOT = false;
             let playerNum;
             switch (this.v.constructor.name) {
@@ -206,21 +207,45 @@ export const initActionText = () => {
         } catch (e) { console.log(e); }
     }
     try {
+
         let functionStr = trim(GameCore.prototype.checkLineClears.toString());
 
+        const linesClearedPattern = /switch\((_0x[a-f0-9]+)\)/
+        const matchLineClearCheck = functionStr.match(linesClearedPattern);
+        if (!matchLineClearCheck) {
+            console.log("action text injection failed.");
+        }
+
         // find switch(linesCleared) to get linesCleared variable
-        functionStr = functionStr.replace(/switch\((_0x[a-f0-9]+x[a-f0-9]+)\)/, (match, p1) => `let linesCleared=${p1}; switch(${p1})`);
+        functionStr = functionStr.replace(linesClearedPattern, (_, p1) => `let linesCleared=${p1}; switch(${p1})`);
 
         // insert displayActionText after the following code:
-        // ... atk+ cba;
+        // ... atk, cba);
         // let atkMeta={type:_,b2b:this._,cmb:this._};
-        let replacePattern = /(_0x[a-f0-9]+x[a-f0-9]+)\+ (_0x[a-f0-9]+x[a-f0-9]+);let (_0x[a-f0-9]+x[a-f0-9]+)=\{type:_0x[a-f0-9]+x[a-f0-9]+,b2b:this\[_0x[a-f0-9]+\[\d+]],cmb:this\[_0x[a-f0-9]+\[\d+]]};/;
-        let replacer = function (match, p1, p2, p3) { return match + `let atk = ${p1}; let cba = ${p2}; let type = ${p3}.type; let b2b = ${p3}.b2b; let cmb = ${p3}.cmb;` + trim(displayActionText.toString()); }
+        let replacePattern = /(_0x[a-f0-9]+),(_0x[a-f0-9]+)\);let (_0x[a-f0-9]+)=\{'type':_0x[a-f0-9]+,'b2b':this\[.*\],'cmb':this\[.*\]};/;
+
+        const matchCheck = functionStr.match(replacePattern);
+        if (!matchCheck) {
+            console.log("action text injection failed.");
+        }
+
+        let replacer = function (match, atk, cba, atkMeta) {
+            console.log('replacing yay')
+            return match + `
+            let atk = ${atk};
+            let cba = ${cba};
+            let type = ${atkMeta}.type;
+            let b2b = ${atkMeta}.b2b;
+            let cmb = ${atkMeta}.cmb;
+            `
+                + trim(displayActionText.toString());
+        }
         functionStr = functionStr.replace(replacePattern, replacer);
 
         GameCore.prototype.checkLineClears = new Function(...getArgs(GameCore.prototype.checkLineClears), functionStr);
+        console.log(functionStr);
     } catch (e) {
-        console.log(e);
+        console.log(e); 7
         console.log("Could not inject into line clears!");
     }
     try {
@@ -279,7 +304,6 @@ export const initActionText = () => {
                 this.QueueHoldEnabled = false;
                 this.holdCanvas.style.display = 'none';
                 this.queueCanvas.style.display = 'none';
-                console.log("You are using the Display Attack plugin, which will only function IF H&Q is on.");
             }
         };
     } catch (e) {
