@@ -221,6 +221,7 @@ const generateBody = () => {
   createCheckbox("ENABLE_STAT_PC_NUMBER", "Enable pc number indicator for pc mode");
 
   createTitle("Misc settings");
+  createCheckbox("ENABLE_AUTOMATIC_REPLAY_CODES", "Enable automatic replay code saving on reset");
   createHTML(createKeyInputElement("UNDO_KEYCODE", "keybind to undo moves in practice mode"));
   createCheckbox("ENABLE_CHAT_TIMESTAMPS", "Enable chat timestamps");
   createCheckbox("SHOW_MM_BUTTON", "Show matchmaking button");
