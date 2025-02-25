@@ -38,11 +38,11 @@ var config = {
   ENABLE_CHAT_TIMESTAMPS: true,
   SHOW_QUEUE_INFO: true,
   SHOW_MM_BUTTON: true,
-  TOGGLE_CHAT_KEYCODE: null,
-  CLOSE_CHAT_KEYCODE: null,
-  SCREENSHOT_KEYCODE: null,
+  TOGGLE_CHAT_KEY: null,
+  CLOSE_CHAT_KEY: null,
+  SCREENSHOT_KEY: null,
 
-  UNDO_KEYCODE: null,
+  UNDO_KEY: null,
 };
 
 const defaultConfig = { ...config };
@@ -50,29 +50,33 @@ const defaultConfig = { ...config };
 var listeners = [];
 
 export const initConfig = () => {
+  // Remove keycodes from local storage
+  localStorage.removeItem("TOGGLE_CHAT_KEYCODE");
+  localStorage.removeItem("CLOSE_CHAT_KEYCODE");
+  localStorage.removeItem("SCREENSHOT_KEYCODE");
+  localStorage.removeItem("UNDO_KEYCODE");
   for (var i in config) {
     var val = JSON.parse(localStorage.getItem(i));
     if (val != undefined && val != null) {
       config[i] = val;
     }
   }
-}
+};
 
 const set = function (name, val) {
   config[name] = val;
   localStorage.setItem(name, JSON.stringify(val));
   for (var { event, listener } of listeners) {
-    if (event == name)
-      listener(val);
+    if (event == name) listener(val);
   }
-}
+};
 
 const reset = function (name) {
   set(name, defaultConfig[name]);
-}
+};
 
 const onChange = (event, listener) => {
   listeners.push({ event, listener });
-}
+};
 
 export const Config = () => ({ ...config, set, onChange, reset });

@@ -1,6 +1,6 @@
-import { lerp, shake, shouldRenderEffectsOnView } from './util.js'
-import { Config } from './config.js';
-import { isReplayerReversing } from './replayManager.js'
+import { lerp, shake, shouldRenderEffectsOnView } from "./util.js";
+import { Config } from "./config.js";
+import { isReplayerReversing } from "./replayManager.js";
 // helper function
 const initGFXCanvas = (obj, refCanvas) => {
   obj.GFXCanvas = refCanvas.cloneNode(true);
@@ -13,20 +13,20 @@ const initGFXCanvas = (obj, refCanvas) => {
   */
   obj.GFXCanvas.id = "";
   obj.GFXCanvas.className = "layer mainLayer gfxLayer";
-  obj.GFXctx = obj.GFXCanvas.getContext("2d")
+  obj.GFXctx = obj.GFXCanvas.getContext("2d");
   obj.GFXctx.clearRect(0, 0, obj.GFXCanvas.width, obj.GFXCanvas.height);
   refCanvas.parentNode.appendChild(obj.GFXCanvas);
-}
+};
 
 export const initFX = () => {
-  'use strict';
+  "use strict";
   // where you actually inject things into the settings
 
   // -- injection below --
   if (window.Game) {
-    const oldReadyGo = Game.prototype.readyGo
+    const oldReadyGo = Game.prototype.readyGo;
     Game.prototype.readyGo = function () {
-      let val = oldReadyGo.apply(this, arguments)
+      let val = oldReadyGo.apply(this, arguments);
 
       if (!this.GFXCanvas || !this.GFXCanvas.parentNode) {
         initGFXCanvas(this, this.canvas);
@@ -39,21 +39,19 @@ export const initFX = () => {
 
         this.GFXctx.clearRect(0, 0, this.GFXCanvas.width, this.GFXCanvas.height);
 
-        this.GFXQueue = this.GFXQueue.filter(e => e.process.call(e, this.GFXctx));
+        this.GFXQueue = this.GFXQueue.filter((e) => e.process.call(e, this.GFXctx));
 
-        if (this.GFXQueue.length)
-          requestAnimationFrame(this.GFXLoop);
-      }
+        if (this.GFXQueue.length) requestAnimationFrame(this.GFXLoop);
+      };
       //  window.game = this;
 
       return val;
-    }
+    };
   }
 
   if (window.SlotView) {
     const oldOnResized = SlotView.prototype.onResized;
     SlotView.prototype.onResized = function () {
-
       oldOnResized.apply(this, arguments);
 
       if (this.g && this.g.GFXCanvas && Replayer.prototype.isPrototypeOf(this.g)) {
@@ -63,27 +61,23 @@ export const initFX = () => {
         this.g.GFXCanvas.style.left = this.canvas.style.left;
         this.g.block_size = this.g.v.block_size;
       }
-
-
-    }
+    };
   }
 
   // -- injection below --
-  const oldInitReplay = Replayer.prototype.initReplay
+  const oldInitReplay = Replayer.prototype.initReplay;
   Replayer.prototype.initReplay = function () {
-    let val = oldInitReplay.apply(this, arguments)
+    let val = oldInitReplay.apply(this, arguments);
 
     // SlotViews have replayers attached to them, don't want to double up on the canvases
     //if (SlotView.prototype.isPrototypeOf(this.v))
     //    return;
     window.replayer = this;
 
-
     // always clear and re-init for slotviews
     if (window.SlotView && SlotView.prototype.isPrototypeOf(this.v)) {
-
       // do not do gfx if the board is too small
-      let life = this.v.slot.gs.p.Live
+      let life = this.v.slot.gs.p.Live;
       if (!shouldRenderEffectsOnView(this.v) && !life?.roomConfig?.mode == 2) {
         return val;
       }
@@ -111,24 +105,21 @@ export const initFX = () => {
 
       this.GFXctx.clearRect(0, 0, this.GFXCanvas.width, this.GFXCanvas.height);
 
-      this.GFXQueue = this.GFXQueue.filter(e => e.process.call(e, this.GFXctx));
+      this.GFXQueue = this.GFXQueue.filter((e) => e.process.call(e, this.GFXctx));
 
-      if (this.GFXQueue.length)
-        requestAnimationFrame(this.GFXLoop);
-    }
+      if (this.GFXQueue.length) requestAnimationFrame(this.GFXLoop);
+    };
 
     this.v.canvas.parentNode.appendChild(this.GFXCanvas);
 
     return val;
-  }
+  };
 
   const oldLineClears = GameCore.prototype.checkLineClears;
   GameCore.prototype.checkLineClears = function () {
-
     //console.log(this.GFXCanvas);
 
-    if (!this.GFXCanvas || isReplayerReversing)
-      return oldLineClears.apply(this, arguments);
+    if (!this.GFXCanvas || isReplayerReversing) return oldLineClears.apply(this, arguments);
 
     let oldAttack = this.gamedata.attack;
 
@@ -137,27 +128,28 @@ export const initFX = () => {
       let blocks = 0;
       for (var col = 0; col < 10; col++) {
         let block = this.matrix[row][col];
-        if (9 === block) { // solid garbage
+        if (9 === block) {
+          // solid garbage
           break;
-        };
-        if (0 !== block) {
-          blocks++
         }
-      };
-      if (10 === blocks) { // if line is full
+        if (0 !== block) {
+          blocks++;
+        }
+      }
+      if (10 === blocks) {
+        // if line is full
         cleared++; // add to cleared
 
         // send a line clear animation on this line
         if (Config().ENABLE_LINECLEAR_ANIMATION && Config().LINE_CLEAR_LENGTH > 0) {
           this.GFXQueue.push({
             opacity: 1,
-            delta: 1 / (Config().LINE_CLEAR_LENGTH * 1000 / 60),
+            delta: 1 / ((Config().LINE_CLEAR_LENGTH * 1000) / 60),
             row,
             blockSize: this.block_size,
             amountParted: 0,
             process: function (ctx) {
-              if (this.opacity <= 0)
-                return false;
+              if (this.opacity <= 0) return false;
 
               var x1 = 1;
               var x2 = this.blockSize * 5 + this.amountParted;
@@ -183,13 +175,13 @@ export const initFX = () => {
               this.amountParted = lerp(this.amountParted, this.blockSize * 5, 0.1);
               this.opacity -= this.delta;
               return true;
-            }
-
-          })
+            },
+          });
         }
       }
     }
-    if (cleared > 0) { // if any line was cleared, send a shake
+    if (cleared > 0) {
+      // if any line was cleared, send a shake
       let attack = this.gamedata.attack - oldAttack;
       if (Config().ENABLE_LINECLEAR_SHAKE)
         shake(
@@ -197,25 +189,20 @@ export const initFX = () => {
           Math.min(1 + attack * 5, 50) * Config().LINE_CLEAR_SHAKE_STRENGTH,
           Config().LINE_CLEAR_SHAKE_LENGTH * (1000 / 60)
         );
-      if (this.GFXQueue.length)
-        requestAnimationFrame(this.GFXLoop);
+      if (this.GFXQueue.length) requestAnimationFrame(this.GFXLoop);
     }
     return oldLineClears.apply(this, arguments);
-
-  }
+  };
   // have to do this so we can properly override ReplayerCore
   Replayer.prototype.checkLineClears = GameCore.prototype.checkLineClears;
 
   // placement animation
-  const oldPlaceBlock = GameCore.prototype.placeBlock
+  const oldPlaceBlock = GameCore.prototype.placeBlock;
   GameCore.prototype.placeBlock = function (col, row, time) {
-
     if (!this.GFXCanvas || !Config().ENABLE_PLACE_BLOCK_ANIMATION || isReplayerReversing)
       return oldPlaceBlock.apply(this, arguments);
 
-    const block = this.blockSets[this.activeBlock.set]
-      .blocks[this.activeBlock.id]
-      .blocks[this.activeBlock.rot];
+    const block = this.blockSets[this.activeBlock.set].blocks[this.activeBlock.id].blocks[this.activeBlock.rot];
 
     let val = oldPlaceBlock.apply(this, arguments);
 
@@ -223,34 +210,30 @@ export const initFX = () => {
     if (Config().PIECE_FLASH_LENGTH > 0) {
       this.GFXQueue.push({
         opacity: Config().PIECE_FLASH_OPACITY,
-        delta: Config().PIECE_FLASH_OPACITY / (Config().PIECE_FLASH_LENGTH * 1000 / 60),
+        delta: Config().PIECE_FLASH_OPACITY / ((Config().PIECE_FLASH_LENGTH * 1000) / 60),
         col,
         row,
         blockSize: this.block_size,
         block,
         process: function (ctx) {
-          if (this.opacity <= 0)
-            return false;
-
+          if (this.opacity <= 0) return false;
 
           ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
           this.opacity -= this.delta;
 
           for (var i = 0; i < this.block.length; i++) {
             for (var j = 0; j < this.block[i].length; j++) {
+              if (!this.block[i][j]) continue;
 
-              if (!this.block[i][j])
-                continue;
-
-              var x = 1 + (this.col + j) * this.blockSize
-              var y = 1 + (this.row + i) * this.blockSize
+              var x = 1 + (this.col + j) * this.blockSize;
+              var y = 1 + (this.row + i) * this.blockSize;
 
               ctx.fillRect(x, y, this.blockSize, this.blockSize);
             }
           }
           return true;
-        }
-      })
+        },
+      });
     }
 
     var trailLeftBorder = 10;
@@ -258,8 +241,7 @@ export const initFX = () => {
     var trailBottom = 0;
     for (var i = 0; i < block.length; i++) {
       for (var j = 0; j < block[i].length; j++) {
-        if (!block[i][j])
-          continue;
+        if (!block[i][j]) continue;
         trailLeftBorder = Math.max(Math.min(trailLeftBorder, j), 0);
         trailRightBorder = Math.min(Math.max(trailRightBorder, j), 10);
         trailBottom = Math.max(trailBottom, i);
@@ -278,16 +260,11 @@ export const initFX = () => {
       trailRightBorder,
       trailBottom,
       process: function (ctx) {
-        if (this.opacity <= 0)
-          return false;
+        if (this.opacity <= 0) return false;
 
-        var {
-          trailLeftBorder,
-          trailRightBorder,
-          trailBottom
-        } = this;
+        var { trailLeftBorder, trailRightBorder, trailBottom } = this;
 
-        var row = this.row + trailBottom
+        var row = this.row + trailBottom;
 
         var gradient = ctx.createLinearGradient(0, 0, 0, row * this.blockSize - this.trailTop);
         gradient.addColorStop(0, `rgba(255,255,255,0)`);
@@ -295,9 +272,14 @@ export const initFX = () => {
 
         // Fill with gradient
         ctx.fillStyle = gradient;
-        ctx.fillRect((this.col + trailLeftBorder) * this.blockSize, this.trailTop, (trailRightBorder - trailLeftBorder + 1) * this.blockSize, row * this.blockSize - this.trailTop);
+        ctx.fillRect(
+          (this.col + trailLeftBorder) * this.blockSize,
+          this.trailTop,
+          (trailRightBorder - trailLeftBorder + 1) * this.blockSize,
+          row * this.blockSize - this.trailTop
+        );
 
-        const middle = (trailLeftBorder + trailRightBorder) / 2
+        const middle = (trailLeftBorder + trailRightBorder) / 2;
 
         this.trailLeftBorder = lerp(trailLeftBorder, middle, 0.1);
         this.trailRightBorder = lerp(trailRightBorder, middle, 0.1);
@@ -305,14 +287,11 @@ export const initFX = () => {
         this.opacity -= 0.0125;
 
         return true;
-      }
-    })
-
-
+      },
+    });
 
     requestAnimationFrame(this.GFXLoop);
-
-  }
+  };
   // have to do this so we can properly override ReplayerCore
   Replayer.prototype.placeBlock = GameCore.prototype.placeBlock;
 };

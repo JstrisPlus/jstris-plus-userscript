@@ -1,28 +1,25 @@
-
-
 export const initPracticeSurvivalMode = () => {
-
   // 60 apm cycle from rivi's usermode
   const baseCycle = [
-    {time: 4, attack: 4},
-    {time: 4, attack: 5},
-    {time: 4, attack: 2},
-    {time: 3, attack: 1},
-    {time: 4, attack: 4},
-    {time: 4, attack: 4},
-    {time: 3, attack: 5},
-    {time: 3, attack: 5}
-  ]
+    { time: 4, attack: 4 },
+    { time: 4, attack: 5 },
+    { time: 4, attack: 2 },
+    { time: 3, attack: 1 },
+    { time: 4, attack: 4 },
+    { time: 4, attack: 4 },
+    { time: 3, attack: 5 },
+    { time: 3, attack: 5 },
+  ];
 
   let isCycling = false;
   let shouldStartCycle = false;
   let shouldCancel = true;
   let timeFactor = 1;
   let hangingTimeout = 0;
-  
+
   const INIT_MESS = 20;
-  let setMess = m => null;
-  const changeAPM = (apm) => timeFactor = 60 / apm;
+  let setMess = (m) => null;
+  const changeAPM = (apm) => (timeFactor = 60 / apm);
 
   let hasInit = false;
 
@@ -35,29 +32,25 @@ export const initPracticeSurvivalMode = () => {
       if (!isCycling) return;
       if (game.pmode != 2) return stopCycle();
       game.addIntoGarbageQueue(cycleStep.attack);
-      doCycle(game, (i+1)%baseCycle.length)
+      doCycle(game, (i + 1) % baseCycle.length);
     }, cycleStep.time * timeFactor * 1000);
-  }
+  };
   const startCycle = (game) => {
-    
     if (!isCycling) {
       isCycling = true;
       doCycle(game, 0);
     }
-      
-  }
+  };
   const stopCycle = () => {
     clearTimeout(hangingTimeout);
     isCycling = false;
-  }
+  };
   if (typeof Game == "function") {
-
     const oldQueueBoxFunc = Game.prototype.updateQueueBox;
     Game.prototype.updateQueueBox = function () {
-      if (this.pmode != 2)
-        return oldQueueBoxFunc.apply(this, arguments);
+      if (this.pmode != 2) return oldQueueBoxFunc.apply(this, arguments);
       return oldQueueBoxFunc.apply(this, arguments);
-    }
+    };
     const oldLineClears = GameCore.prototype.checkLineClears;
     GameCore.prototype.checkLineClears = function (x) {
       let oldAttack = this.gamedata.attack;
@@ -68,23 +61,19 @@ export const initPracticeSurvivalMode = () => {
         if (shouldCancel) {
           this.blockOrSendAttack(curAttack, x);
         }
-        
       }
       return val;
-    }
-      
+    };
 
-    const oldReadyGo = Game.prototype.readyGo
+    const oldReadyGo = Game.prototype.readyGo;
     Game.prototype.readyGo = function () {
-
       if (this.pmode == 2) {
         settingsDiv.classList.add("show-practice-mode-settings");
       } else {
         settingsDiv.classList.remove("show-practice-mode-settings");
       }
 
-      if (shouldStartCycle)
-        startCycle(this);
+      if (shouldStartCycle) startCycle(this);
 
       if (!hasInit) {
         let oldOnGameEnd = Settings.prototype.onGameEnd;
@@ -92,44 +81,41 @@ export const initPracticeSurvivalMode = () => {
           this.R.mess = INIT_MESS;
         }
         window.game = this;
-        setMess = m => {
+        setMess = (m) => {
           if (this.pmode == 2) {
             this.R.mess = m;
           }
-        }
-        this.Settings.onGameEnd = function() {
+        };
+        this.Settings.onGameEnd = function () {
           if (this.p.pmode == 2) {
             stopCycle();
           }
-          return oldOnGameEnd.apply(this, arguments)
-        }
+          return oldOnGameEnd.apply(this, arguments);
+        };
         startStopButton.addEventListener("click", () => {
           shouldStartCycle = !shouldStartCycle;
-      
+
           if (shouldStartCycle) {
             startCycle(this);
-            startStopButton.innerHTML = "Stop APM Cycle";
+            startStopButton.textContent = "Stop APM Cycle";
           } else {
             stopCycle(this);
-            startStopButton.innerHTML = "Start APM Cycle";
+            startStopButton.textContent = "Start APM Cycle";
           }
-    
-        })
+        });
         startStopButton.disabled = false;
         hasInit = true;
       }
-      return oldReadyGo.apply(this, arguments)
-    }
-
+      return oldReadyGo.apply(this, arguments);
+    };
   }
-
 
   const stage = document.getElementById("stage");
   const settingsDiv = document.createElement("DIV");
   settingsDiv.id = "customPracticeSettings";
 
-  var slider = document.createElement("input")
-  slider.type = "range"
+  var slider = document.createElement("input");
+  slider.type = "range";
   slider.min = 5;
   slider.max = 200;
   slider.step = 5;
@@ -148,27 +134,27 @@ export const initPracticeSurvivalMode = () => {
 
   valueLabel.addEventListener("change", () => {
     var num = Number.parseFloat(valueLabel.value);
-    num = Math.max(5,Math.min(num, 200));
+    num = Math.max(5, Math.min(num, 200));
     slider.value = num.toFixed(0);
     valueLabel.value = num;
     changeAPM(num);
   });
 
   valueLabel.addEventListener("click", () => {
-    $(window).trigger('modal-opened');
-  })
+    $(window).trigger("modal-opened");
+  });
 
   var label = document.createElement("label");
   label.htmlFor = "customApmSlider";
-  label.innerHTML = "APM";
+  label.textContent = "APM";
 
   var sliderDiv = document.createElement("div");
   sliderDiv.appendChild(label);
   sliderDiv.appendChild(slider);
   sliderDiv.appendChild(valueLabel);
 
-  var messSlider = document.createElement("input")
-  messSlider.type = "range"
+  var messSlider = document.createElement("input");
+  messSlider.type = "range";
   messSlider.min = 0;
   messSlider.max = 100;
   messSlider.step = 1;
@@ -187,19 +173,19 @@ export const initPracticeSurvivalMode = () => {
 
   messValueLabel.addEventListener("change", () => {
     var num = Number.parseFloat(messValueLabel.value);
-    num = Math.max(0,Math.min(num, 100));
+    num = Math.max(0, Math.min(num, 100));
     messSlider.value = num.toFixed(0);
     messValueLabel.value = num;
     setMess(num);
   });
 
   messValueLabel.addEventListener("click", () => {
-    $(window).trigger('modal-opened');
-  })
+    $(window).trigger("modal-opened");
+  });
 
   var messLabel = document.createElement("label");
   messLabel.htmlFor = "customApmSlider";
-  messLabel.innerHTML = "🧀%";
+  messLabel.textContent = "🧀%";
 
   var messSliderDiv = document.createElement("div");
   messSliderDiv.appendChild(messLabel);
@@ -208,7 +194,7 @@ export const initPracticeSurvivalMode = () => {
 
   var cancelLabel = document.createElement("label");
   cancelLabel.htmlFor = "cancelCheckbox";
-  cancelLabel.innerHTML = "Allow cancel";
+  cancelLabel.textContent = "Allow cancel";
 
   var cancelCheckbox = document.createElement("input");
   cancelCheckbox.type = "checkbox";
@@ -216,21 +202,20 @@ export const initPracticeSurvivalMode = () => {
   cancelCheckbox.checked = true;
 
   cancelCheckbox.addEventListener("change", () => {
-    shouldCancel = cancelCheckbox.checked
-  })
+    shouldCancel = cancelCheckbox.checked;
+  });
 
   var cancelDiv = document.createElement("div");
   cancelDiv.appendChild(cancelLabel);
   cancelDiv.appendChild(cancelCheckbox);
 
   var startStopButton = document.createElement("button");
-  startStopButton.innerHTML = "Start APM Cycle";
+  startStopButton.textContent = "Start APM Cycle";
   startStopButton.disabled = true;
-  settingsDiv.innerHTML+="<b>Downstack Practice</b><br/>"
+  settingsDiv.innerHTML += "<b>Downstack Practice</b><br/>";
   settingsDiv.appendChild(sliderDiv);
   settingsDiv.appendChild(messSliderDiv);
   settingsDiv.appendChild(cancelDiv);
   settingsDiv.appendChild(startStopButton);
   stage.appendChild(settingsDiv);
-
-}
+};

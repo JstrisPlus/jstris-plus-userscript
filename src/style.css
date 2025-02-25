@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Gugi&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Gugi&display=swap");
 
 /* =========== settings modal css ============= */
 
@@ -41,7 +41,6 @@
   height: 30px;
   font-size: 25px;
   border: solid 1px black;
-
 }
 
 .settings-modalTextarea {
@@ -84,7 +83,6 @@
   bottom: 30px;
 
   transition: 0.5s;
-
 }
 
 .settings-modalCloseButton {
@@ -164,8 +162,8 @@
   background: #d3d3d3;
   outline: none;
   opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
 }
 
 .settings-slider:hover {
@@ -178,7 +176,7 @@
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background: #04AA6D;
+  background: #04aa6d;
   cursor: pointer;
 }
 
@@ -186,7 +184,7 @@
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  background: #04AA6D;
+  background: #04aa6d;
   cursor: pointer;
 }
 
@@ -194,44 +192,44 @@
 @-webkit-keyframes slideIn {
   from {
     bottom: -300px;
-    opacity: 0
+    opacity: 0;
   }
 
   to {
     bottom: 0;
-    opacity: 1
+    opacity: 1;
   }
 }
 
 @keyframes slideIn {
   from {
     bottom: -300px;
-    opacity: 0
+    opacity: 0;
   }
 
   to {
     bottom: 0;
-    opacity: 1
+    opacity: 1;
   }
 }
 
 @-webkit-keyframes fadeIn {
   from {
-    opacity: 0
+    opacity: 0;
   }
 
   to {
-    opacity: 1
+    opacity: 1;
   }
 }
 
 @keyframes fadeIn {
   from {
-    opacity: 0
+    opacity: 0;
   }
 
   to {
-    opacity: 1
+    opacity: 1;
   }
 }
 
@@ -257,7 +255,7 @@
 
 .mmLoader {
   border: 16px solid white;
-  border-top: 16px solid #04AA6D;
+  border-top: 16px solid #04aa6d;
   border-radius: 50%;
   width: 120px;
   height: 120px;
@@ -373,7 +371,7 @@
   margin: 2px 2px;
   border-radius: 100%;
   border: 2px solid #222222;
-  background-color: #04AA6D;
+  background-color: #04aa6d;
 }
 
 .mm-button:hover {
@@ -393,7 +391,7 @@
   text-decoration: none;
   margin: 2px 2px;
   border: 2px solid #222222;
-  background-color: #04AA6D;
+  background-color: #04aa6d;
 }
 
 .mm-ready-button:hover {
@@ -437,7 +435,6 @@
 .show-chat-timestamps .chat-timestamp {
   display: inline !important;
 }
-
 
 /* ===== stats css ===== */
 
@@ -550,7 +547,6 @@
   pointer-events: none;
 }
 
-
 /* practice mode settings */
 .show-practice-mode-settings {
   display: block !important;
@@ -584,7 +580,7 @@
 /* replay addons */
 
 .replay-btn {
-  padding: .25em .5em;
+  padding: 0.25em 0.5em;
   border: solid 1px white;
   border-radius: 4px;
   display: inline-block;
@@ -596,7 +592,7 @@
 .replay-btn:hover,
 .replay-btn:focus {
   cursor: pointer;
-  color: #04AA6D;
+  color: #04aa6d;
 }
 
 .replay-btn-group {
@@ -606,12 +602,12 @@
   border-radius: 4px;
 }
 
-.replay-btn-group>.c-btn {
+.replay-btn-group > .c-btn {
   border-radius: 0;
   border: none;
   border-right: 1px solid white;
 }
 
-.replay-btn-group>.c-btn:last-child {
+.replay-btn-group > .c-btn:last-child {
   border-right: none;
 }

@@ -1,11 +1,10 @@
 export const shouldRenderEffectsOnView = (view) => {
   return view.holdCanvas && view.holdCanvas.width >= 70;
-}
-
+};
 
 export const lerp = (start, end, amt) => {
   return (1 - amt) * start + amt * end;
-}
+};
 
 // https://jsfiddle.net/12aueufy/1/
 var shakingElements = [];
@@ -39,7 +38,6 @@ export const shake = function (element, magnitude = 16, numberOfShakes = 15, ang
   //Add the element to the `shakingElements` array if it
   //isn't already there
 
-
   if (shakingElements.indexOf(element) === -1) {
     //console.log("added")
     shakingElements.push(element);
@@ -57,13 +55,11 @@ export const shake = function (element, magnitude = 16, numberOfShakes = 15, ang
 
   //The `upAndDownShake` function
   function upAndDownShake() {
-
     //Shake the element while the `counter` is less than
     //the `numberOfShakes`
     if (counter < numberOfShakes) {
-
       //Reset the element's position at the start of each shake
-      element.style.transform = 'translate(' + startX + 'px, ' + startY + 'px)';
+      element.style.transform = `translate(${startX}px, ${startY}px)`;
 
       //Reduce the magnitude
       magnitude -= magnitudeUnit;
@@ -72,7 +68,7 @@ export const shake = function (element, magnitude = 16, numberOfShakes = 15, ang
       var randomX = randomInt(-magnitude, magnitude);
       var randomY = randomInt(-magnitude, magnitude);
 
-      element.style.transform = 'translate(' + randomX + 'px, ' + randomY + 'px)';
+      element.style.transform = `translate(${randomX}px, ${randomY}px)`;
 
       //Add 1 to the counter
       counter += 1;
@@ -83,7 +79,7 @@ export const shake = function (element, magnitude = 16, numberOfShakes = 15, ang
     //When the shaking is finished, restore the element to its original
     //position and remove it from the `shakingElements` array
     if (counter >= numberOfShakes) {
-      element.style.transform = 'translate(' + startX + ', ' + startY + ')';
+      element.style.transform = `translate(${startX}, ${startY})`;
       shakingElements.splice(shakingElements.indexOf(element), 1);
     }
   }
@@ -91,9 +87,8 @@ export const shake = function (element, magnitude = 16, numberOfShakes = 15, ang
   //The `angularShake` function
   function angularShake() {
     if (counter < numberOfShakes) {
-
       //Reset the element's rotation
-      element.style.transform = 'rotate(' + startAngle + 'deg)';
+      element.style.transform = `rotate(${startAngle}deg)`;
 
       //Reduce the magnitude
       magnitude -= magnitudeUnit;
@@ -102,7 +97,7 @@ export const shake = function (element, magnitude = 16, numberOfShakes = 15, ang
       //by an amount in radians that matches the magnitude
       var angle = Number(magnitude * tiltAngle).toFixed(2);
 
-      element.style.transform = 'rotate(' + angle + 'deg)';
+      element.style.transform = `rotate(${angle}deg)`;
       counter += 1;
 
       //Reverse the tilt angle so that the element is tilted
@@ -115,80 +110,82 @@ export const shake = function (element, magnitude = 16, numberOfShakes = 15, ang
     //When the shaking is finished, reset the element's angle and
     //remove it from the `shakingElements` array
     if (counter >= numberOfShakes) {
-      element.style.transform = 'rotate(' + startAngle + 'deg)';
+      element.style.transform = `rotate(${startAngle}deg)`;
       shakingElements.splice(shakingElements.indexOf(element), 1);
     }
   }
-
 };
-
 
 // @params callback: (name: string , loggedIn: boolean) => {}
 export const getPlayerName = (callback) => {
-  fetch("https://jstris.jezevec10.com/profile").then(res => {
-    if (res.url.includes("/u/")) {
-      let username = res.url.substring(res.url.indexOf("/u/") + 3);
-      callback(username, true);
-    } else {
-      callback("", false)
-    }
-  }).catch(e => {
-    console.log(e);
-    callback("", false)
-  })
-}
+  fetch("https://jstris.jezevec10.com/profile")
+    .then((res) => {
+      if (res.url.includes("/u/")) {
+        let username = res.url.substring(res.url.indexOf("/u/") + 3);
+        callback(username, true);
+      } else {
+        callback("", false);
+      }
+    })
+    .catch((e) => {
+      console.log(e);
+      callback("", false);
+    });
+};
 
-let notificationsSupported = false
+let notificationsSupported = false;
 
 export const authNotification = () => {
   if (!window.Notification) {
-    notificationsSupported = false
-  } else if (Notification.permission != 'granted') {
-    Notification.requestPermission().then((p) => {
-      if (p === 'granted') {
-        notificationsSupported = true
-      } else {
-        console.log('User has blocked notifications.')
-      }
-    }).catch((err) => {
-      console.error(err)
-    })
+    notificationsSupported = false;
+  } else if (Notification.permission != "granted") {
+    Notification.requestPermission()
+      .then((p) => {
+        if (p === "granted") {
+          notificationsSupported = true;
+        } else {
+          console.log("User has blocked notifications.");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   } else {
-    notificationsSupported = true
+    notificationsSupported = true;
   }
-}
+};
 
 export const notify = (title, body) => {
   if (notificationsSupported) {
     new Notification(title, {
       body: body,
-      icon: 'https://jstrisplus.github.io/jstris-plus-assets/logo.png'
-    })
+      icon: "https://jstrisplus.github.io/jstris-plus-assets/logo.png",
+    });
   }
-}
+};
 
-let plusSfx = { //fallback
+let plusSfx = {
+  //fallback
   READY: "https://jstrisplus.github.io/jstris-plus-assets/sfx/ready.wav",
-  PB: "https://jstrisplus.github.io/jstris-plus-assets/sfx/personalBest.wav"
-}
+  PB: "https://jstrisplus.github.io/jstris-plus-assets/sfx/personalBest.wav",
+};
 export const setPlusSfx = (sfx) => {
-  let d = document.getElementById('custom_plus_sfx_json_err')
+  let d = document.getElementById("custom_plus_sfx_json_err");
   try {
-    sfx = JSON.parse(sfx)
+    sfx = JSON.parse(sfx);
   } catch (e) {
-
     if (d) {
-      d.textContent = "SFX json is invalid"
+      d.textContent = "SFX json is invalid";
     }
-    return
+    return;
   }
-  d.textContent = `Loaded ${sfx.name} Jstris+ SFX`
-  plusSfx = sfx
-}
+  d.textContent = `Loaded ${sfx.name} Jstris+ SFX`;
+  plusSfx = sfx;
+};
 export const playSound = (id) => {
   if (!plusSfx[id]) {
-    return console.error(`unknown sfx ${id}`)
+    return console.error(`unknown sfx ${id}`);
   }
   const audio = new Audio(plusSfx[id]);
   audio.play();
-}
+};
