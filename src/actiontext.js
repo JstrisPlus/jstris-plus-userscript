@@ -202,7 +202,7 @@ export const initActionText = () => {
                 if (b2b && this.isBack2Back) clearText = "B2B " + clearText;
                 if (cmb > 0) clearText += ` combo${cmb}`;
 
-                this.displayer.displayNewAction(atk + cba, clearText);
+                this.displayer.displayNewAction(atk, clearText);
             }
         } catch (e) { console.log(e); }
     }
@@ -216,24 +216,24 @@ export const initActionText = () => {
             console.log("action text injection failed.");
         }
 
-        // find switch(linesCleared) to get linesCleared variable
-        functionStr = functionStr.replace(linesClearedPattern, (_, p1) => `let linesCleared=${p1}; switch(${p1})`);
+        // find switch(linesCleared) to get linesCleared variable + get a variable down for linesSent before it's incremented
+        functionStr = functionStr.replace(linesClearedPattern, (_, p1) => `
+            let linesCleared=${p1}; let atkBefore = this.gamedata.linesSent; switch(${p1})
+        `);
 
         // insert displayActionText after the following code:
-        // ... atk, cba);
         // let atkMeta={type:_,b2b:this._,cmb:this._};
-        let replacePattern = /(_0x[a-f0-9]+),(_0x[a-f0-9]+)\);let (_0x[a-f0-9]+)=\{'type':_0x[a-f0-9]+,'b2b':this\[.*\],'cmb':this\[.*\]};/;
+        let replacePattern = /let (_0x[a-f0-9]+)=\{'type':_0x[a-f0-9]+,'b2b':this\[.*\],'cmb':this\[.*\]};/;
 
         const matchCheck = functionStr.match(replacePattern);
         if (!matchCheck) {
             console.log("action text injection failed.");
         }
 
-        let replacer = function (match, atk, cba, atkMeta) {
+        let replacer = function (match, atkMeta) {
             console.log('replacing yay')
             return match + `
-            let atk = ${atk};
-            let cba = ${cba};
+            let atk = this.gamedata.linesSent - atkBefore;
             let type = ${atkMeta}.type;
             let b2b = ${atkMeta}.b2b;
             let cmb = ${atkMeta}.cmb;
