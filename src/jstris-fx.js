@@ -84,7 +84,7 @@ export const initFX = () => {
 
       // do not do gfx if the board is too small
       let life = this.v.slot.gs.p.Live
-      if (!shouldRenderEffectsOnView(this.v) && !life?.roomConfig?.mode == 2) {
+      if (!shouldRenderEffectsOnView(this.v) && life?.roomConfig?.mode !== 2) {
         return val;
       }
       let foundGFXCanvases = this.v.slot.slotDiv.getElementsByClassName("gfxLayer");
@@ -124,8 +124,6 @@ export const initFX = () => {
 
   const oldLineClears = GameCore.prototype.checkLineClears;
   GameCore.prototype.checkLineClears = function () {
-
-    //console.log(this.GFXCanvas);
 
     if (!this.GFXCanvas || isReplayerReversing)
       return oldLineClears.apply(this, arguments);

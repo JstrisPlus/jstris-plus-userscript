@@ -263,7 +263,7 @@ export const loadCustomSFX = (sfx = {}) => {
             }
 
         }
-        if (sfx.hasOwnProperty(b2b) && b2b) {
+        if (sfx.hasOwnProperty("b2b") && b2b) {
             sounds.push('b2b')
         }
         if (combo >= 0) {

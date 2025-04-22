@@ -4,6 +4,16 @@ import { CUSTOM_SOUND_PRESET_ELEMENT, fetchSoundPresets } from "./customSoundPre
 import { CUSTOM_PLUS_SOUND_PRESET_ELEMENT, fetchPlusSoundPresets } from "./plusSoundPresets";
 import { createKeyInputElement, TOGGLE_CHAT_KEY_INPUT_ELEMENT } from "./toggleChatKeyInput";
 
+const GEAR_SVG = `
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 15 15"><path fill="currentColor" fill-rule="evenodd" d="M7.07.65a.85.85 0 0 0-.828.662l-.238 1.05q-.57.167-1.08.448l-.91-.574a.85.85 0 0 0-1.055.118l-.606.606a.85.85 0 0 0-.118 1.054l.574.912q-.28.509-.447 1.079l-1.05.238a.85.85 0 0 0-.662.829v.857a.85.85 0 0 0 .662.829l1.05.238q.166.57.448 1.08l-.575.91a.85.85 0 0 0 .118 1.055l.607.606a.85.85 0 0 0 1.054.118l.911-.574q.51.28 1.079.447l.238 1.05a.85.85 0 0 0 .829.662h.857a.85.85 0 0 0 .829-.662l.238-1.05q.57-.166 1.08-.447l.911.574a.85.85 0 0 0 1.054-.118l.606-.606a.85.85 0 0 0 .118-1.054l-.574-.911q.282-.51.448-1.08l1.05-.238a.85.85 0 0 0 .662-.829v-.857a.85.85 0 0 0-.662-.83l-1.05-.237q-.166-.57-.447-1.08l.574-.91a.85.85 0 0 0-.118-1.055l-.606-.606a.85.85 0 0 0-1.055-.118l-.91.574a5.3 5.3 0 0 0-1.08-.448l-.239-1.05A.85.85 0 0 0 7.928.65zM4.92 3.813a4.5 4.5 0 0 1 1.795-.745L7.071 1.5h.857l.356 1.568a4.5 4.5 0 0 1 1.795.744l1.36-.857l.607.606l-.858 1.36c.37.527.628 1.136.744 1.795l1.568.356v.857l-1.568.355a4.5 4.5 0 0 1-.744 1.796l.857 1.36l-.606.606l-1.36-.857a4.5 4.5 0 0 1-1.795.743L7.928 13.5h-.857l-.356-1.568a4.5 4.5 0 0 1-1.794-.744l-1.36.858l-.607-.606l.858-1.36a4.5 4.5 0 0 1-.744-1.796L1.5 7.93v-.857l1.568-.356a4.5 4.5 0 0 1 .744-1.794L2.954 3.56l.606-.606zM9.026 7.5a1.525 1.525 0 1 1-3.05 0a1.525 1.525 0 0 1 3.05 0m.9 0a2.425 2.425 0 1 1-4.85 0a2.425 2.425 0 0 1 4.85 0" clip-rule="evenodd"/></svg>
+`
+
+const X_SVG = `
+<svg fill="#000000" width="30" height="30" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 14.545L1.455 16 8 9.455 14.545 16 16 14.545 9.455 8 16 1.455 14.545 0 8 6.545 1.455 0 0 1.455 6.545 8z" fill="#333" fill-rule="evenodd"/>
+</svg>
+`
+
 export const createTitle = (text, style) => {
   var modalBody = document.getElementById("settingsBody");
   var p = document.createElement("h3");
@@ -235,12 +245,12 @@ export const initModal = () => {
 
 
   // modal UI inject
-  var modalButton = document.createElement("IMG");
-  modalButton.src = "https://media.istockphoto.com/vectors/gear-icon-vector-illustration-vector-id857768248?k=6&m=857768248&s=170667a&w=0&h=p8E79IurGj0VrH8FO3l1-NXmMubUiShDW88xXynZpjE=";
+  var modalButton = document.createElement("div");
+  modalButton.innerHTML = GEAR_SVG;
   modalButton.className = "settings-modalOpenButton";
 
-  var modalCloseButton = document.createElement("IMG");
-  modalCloseButton.src = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.onlinewebfonts.com%2Fsvg%2Fimg_324119.png&f=1&nofb=1";
+  var modalCloseButton = document.createElement("div");
+  modalCloseButton.innerHTML = X_SVG;
   modalCloseButton.className = "settings-modalCloseButton"
 
   modalButton.addEventListener("click", () => {
