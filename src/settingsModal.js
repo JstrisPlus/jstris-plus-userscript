@@ -229,6 +229,8 @@ const generateBody = () => {
   createCheckbox("ENABLE_STAT_PPB", "Enable points per block stat for ultra");
   createCheckbox("ENABLE_STAT_SCORE_PACE", "Enable score pace for ultra");
   createCheckbox("ENABLE_STAT_PC_NUMBER", "Enable pc number indicator for pc mode");
+  createSliderInput("OVERSTACK_COLUMN", "Well column for overstack counter", 0, 9, 1);
+  createSliderInput("PARITY_COLUMN", "Well column for local parity", -1, 9, 1);
 
   createTitle("Misc settings");
   createCheckbox("ENABLE_AUTOMATIC_REPLAY_CODES", "Enable automatic replay code saving on reset");

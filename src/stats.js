@@ -21,6 +21,17 @@ const updateStats = function () {
       }
       stat.row.style.display = "table-row";
       var val = stat.calc(this);
+      if (val == undefined) return;
+      if (val == -999) { // key disappear the stat
+        stat.row.style.display = "none";
+        return;
+      }
+      if (stat.name == "Overstack") {
+        if (val < 0) stat.row.style.color = "red";
+        else if (val < 12) stat.row.style.color = "green";
+        else if (val < 25) stat.row.style.color = "orange";
+        else stat.row.style.color = "red";
+      }
       stat.row.children[1].innerHTML = val;
     } else {
       stat.row.style.display = "none";
@@ -33,6 +44,23 @@ const initStat = (index, name, configVar, calc, options = {}) => {
     calc,
     val: 0,
     enabled: Config()[configVar],
+    initialValue: options.initialValue || 0,
+    enabledMode: options.enabledMode || 0, // 0 = enabled for all modes 
+  });
+  Config().onChange(configVar, val => {
+    for (var individualStats of stats)
+      var stat = individualStats.find(e => e.name == name);
+      stat.enabled = val;
+  })
+}
+
+const initStat2 = (index, name, configVar, calc, options = {}) => {
+  let column = Config()[configVar];
+  stats[index].push({
+    name,
+    calc,
+    val: 0,
+    enabled: (column > 1 && column < 8),
     initialValue: options.initialValue || 0,
     enabledMode: options.enabledMode || 0, // 0 = enabled for all modes 
   });
@@ -81,7 +109,111 @@ export const initGameStats = (stageEle, index) => {
     var score = game["gamedata"]["score"];
     var placedBlocks = game["placedBlocks"];
     return replaceBadValues(score / placedBlocks).toFixed(2);
-  }, { enabledMode: 5 });
+  }, { enabledMode: 0 });
+
+  initStat2(index,"Chk_par_L", "PARITY_COLUMN", game => {
+    let well_index = parseInt(Config()["PARITY_COLUMN"]);
+    if (well_index == -1 || well_index == 0) return -999;
+
+    let board = game["matrix"];
+
+    let blacks = 0;
+    let whites = 0;
+    for (let row in board) {
+        for (let col = 0; col < well_index; col++) {
+            if (row % 2 == col % 2) {
+                whites += board[row][col] != 0;
+            } else {
+                blacks += board[row][col] != 0;
+            }
+        }
+    }
+    for (let col = 0; col < game.deadline.length; col++) {
+        if (col % 2 == 0) blacks += game.deadline[col] != 0;
+        else whites += game.deadline[col] != 0;
+    }
+    let check = whites - blacks;
+
+    return check;
+
+
+  }, { enabledMode: 2 });
+
+  initStat2(index,"Chk_par_R", "PARITY_COLUMN", game => {
+    let well_index = parseInt(Config()["PARITY_COLUMN"]);
+    if (well_index == -1 || well_index == 9) return -999;
+
+    let board = game["matrix"];
+
+    let blacks = 0;
+    let whites = 0;
+    for (let row in board) {
+        for (let col = 9; col > well_index; col--) {
+            if (row % 2 == col % 2) {
+                whites += board[row][col] != 0;
+            } else {
+                blacks += board[row][col] != 0;
+            }
+        }
+    }
+    for (let col = 0; col < game.deadline.length; col++) {
+        if (col % 2 == 0) blacks += game.deadline[col] != 0;
+        else whites += game.deadline[col] != 0;
+    }
+    let check = whites - blacks;
+
+    return check;
+
+
+  }, { enabledMode: 2 });
+
+  initStat2(index,"Overstack", "OVERSTACK_COLUMN", game => {
+    let well_index = parseInt(Config()["OVERSTACK_COLUMN"]);
+    if (well_index <= 1 || well_index >= 8) return -999;
+    var placedBlocks = game["placedBlocks"];
+    if (placedBlocks % 7 != 0) return undefined;
+
+    let board = game["matrix"];
+
+    let col = well_index + 1;
+    let well_height_8 = 0;
+    for (let row = 19; row >= 0; row--) {
+        if (board[row][col] == 0) {
+            well_height_8 = 20 - row;
+            break;
+        }
+    }
+    col = well_index - 1;
+    let well_height_6 = 0;
+    for (let row = 19; row >= 0; row--) {
+        if (board[row][col] == 0) {
+            well_height_6 = 20 - row;
+            break;
+        }
+    }
+
+    let well_height = Math.max(well_height_6,well_height_8) + Math.abs(well_height_6-well_height_8) * 2 / 5;
+    // incredibl
+    // console.log(well_height_8, well_height_6, well_height);
+
+    // now determine stacc height
+
+    let num_minoes = 0;
+    for (let row = 0; row < 20; row++) {
+      for (let col = 0; col < 10; col++) {
+        if (Math.abs(col - well_index) > 2) { // define columns within 2 of the well to be part of well
+          if (board[row][col] != 0) num_minoes++;
+        }
+      }
+    }
+
+    let overstacc = num_minoes - well_height * 5;
+
+    // if (game["blockInHold"]!= null && game["blockInHold"].id == 2) overstacc -= 10; // if you still have the T piece in hold
+
+    return overstacc;
+
+  }, { enabledMode: 2 });
 
   initStat(index,"Score pace", "ENABLE_STAT_SCORE_PACE", game => {
     var score = game["gamedata"]["score"];
